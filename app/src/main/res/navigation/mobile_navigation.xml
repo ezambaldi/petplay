@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_play">
+
+    <fragment
+        android:id="@+id/navigation_audios"
+        android:name="br.com.zambaldi.petplay.ui.audios.AudiosFragment"
+        android:label="@string/title_audios"
+        tools:layout="@layout/fragment_audios" />
+
+    <fragment
+        android:id="@+id/navigation_play"
+        android:name="br.com.zambaldi.petplay.ui.play.PlayFragment"
+        android:label="@string/title_play"
+        tools:layout="@layout/fragment_play" />
+
+    <fragment
+        android:id="@+id/navigation_groups"
+        android:name="br.com.zambaldi.petplay.ui.groups.GroupsFragment"
+        android:label="@string/title_groups"
+        tools:layout="@layout/fragment_groups" />
+
+</navigation>

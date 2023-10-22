@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">PET Play</string>
+    <string name="title_play">PET Play</string>
+    <string name="title_audios">PET Play Audios</string>
+    <string name="title_groups">PET Play Groups</string>
+    <string name="touch_for_play">Touch for Play</string>
+    <string name="touch_for_remove">Touch for Remove</string>
+    <string name="menu_play">Play</string>
+    <string name="menu_audios">Audios</string>
+    <string name="menu_groups">Groups</string>
+    <string name="empty_screen">There is no Data</string>
+    <string name="error_screen">A error ocurred</string>
+    <string name="top_message_error">A error ocurred to execute</string>
+    <string name="top_message_success">Successfully executed</string>
+    <string name="msg_remove_item">Do you want to remove?</string>
+    <string name="btn_yes">Yes</string>
+    <string name="btn_no">No</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="title_add_audio">Add new audio</string>
+    <string name="enter_name">Enter name</string>
+    <string name="msg_empty_field">Field can not be empty</string>
+
+
+
+
+</resources>
