@@ -29,17 +29,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +57,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplay.R
 import br.com.zambaldi.petplay.models.Audio
+import br.com.zambaldi.petplay.utils.SnackBarContainer
+import br.com.zambaldi.petplay.utils.SnackBarVisualsCustom
+import br.com.zambaldi.petplay.utils.showCustomSnackBar
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
@@ -65,8 +70,8 @@ import com.example.myapplicationtest.utils.bodyLarge
 import com.example.myapplicationtest.utils.bodyLargeBold
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun AudioListScreen(
@@ -240,6 +245,7 @@ fun AudioListScreen(
             }
         }
     )
+
 }
 
 @Composable
@@ -276,30 +282,46 @@ fun TopMessage(
     message: String,
     typeMessage: TypeMessage,
     modifier: Modifier = Modifier,
+    scope: CoroutineScope,
+    errorSnackBarHostState: SnackbarHostState,
 ) {
-    var isColumnVisible by remember { mutableStateOf(true) }
-    if (isColumnVisible) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier
-                .fillMaxSize()
-                .background(typeMessage.color)
-                .padding(2.dp)
-        ) {
-            Text(
-                text = message,
-                color = Color.White,
-                style = bodyLargeBold,
-                textAlign = TextAlign.Center,
-                modifier = modifier
-                    .fillMaxWidth()
+    val backColor = colorResource(id = R.color.md_theme_dark_onTertiary)
+    val textColor = colorResource(id = R.color.md_theme_dark_onPrimary)
+    LaunchedEffect(Unit) {
+        scope.launch {
+            errorSnackBarHostState.showCustomSnackBar(
+                message = message,
+                duration = SnackbarDuration.Short,
+                backgroundColor = backColor,
+                textColor = textColor,
+                drawableRes = R.drawable.ic_launcher_foreground,
+                snackBarPosition = SnackBarVisualsCustom.Companion.SnackBarPosition.TOP
             )
         }
     }
-    LaunchedEffect(Unit) {
-        delay(2.seconds)
-        isColumnVisible = false
-    }
+
+//    var isColumnVisible by remember { mutableStateOf(true) }
+//    if (isColumnVisible) {
+//        Column(
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            modifier = modifier
+//                .background(color = typeMessage.color, shape = RoundedCornerShape(size = 50.dp))
+//                .padding(start = 32.dp, end = 32.dp, top = 2.dp, bottom = 2.dp)
+//        ) {
+//            Text(
+//                text = message,
+//                color = Color.White,
+//                style = bodyLargeBold,
+//                textAlign = TextAlign.Center,
+//                modifier = modifier
+//                    .fillMaxWidth()
+//            )
+//        }
+//    }
+//    LaunchedEffect(Unit) {
+//        delay(2.seconds)
+//        isColumnVisible = false
+//    }
 }
 
 @Composable
@@ -350,6 +372,13 @@ fun AudioScreenSuccess(
     deleteAudio: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
+    val errorSnackBarHostState = remember { SnackbarHostState() }
+
+    var showTopMessage by remember { mutableStateOf(false) }
+    var topMessage = ""
+
+
     val audios: List<Audio> = state.data
     Column(
         horizontalAlignment = Alignment.Start,
@@ -362,7 +391,12 @@ fun AudioScreenSuccess(
         ) {
             Column {
                 audios.forEach { audio ->
-                    Row {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_play),
                             contentDescription = stringResource(id = R.string.touch_for_play),
@@ -374,9 +408,9 @@ fun AudioScreenSuccess(
                         Text(
                             text = audio.name,
                             style = bodyLarge,
-                            color = colorResource(id = R.color.md_theme_light_surfaceTint),
+                            color = colorResource(id = R.color.md_theme_dark_onTertiary),
                             modifier = modifier
-                                .padding(bottom = 16.dp, start = 4.dp)
+                                .padding(start = 4.dp)
                         )
                         Spacer(Modifier.weight(1f))
 
@@ -410,13 +444,18 @@ fun AudioScreenSuccess(
                         stringResource(id = R.string.top_message_error) + " (${state.topMessage}) "
                     TopMessage(
                         message = message,
-                        typeMessage = state.typeMessage
+                        typeMessage = state.typeMessage,
+                        scope = scope,
+                        errorSnackBarHostState = errorSnackBarHostState,
+
                     )
                 }
 //            }
 
         }
     }
+
+    SnackBarContainer(snackBarHostState = errorSnackBarHostState)
 }
 
 @Composable
@@ -461,6 +500,7 @@ fun AlertDialogWithBtn(
             }
         )
     }
+
 }
 
 @Composable

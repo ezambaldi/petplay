@@ -39,6 +39,13 @@ class AudiosViewModel(
                 }
                 is GenericResult.Error -> {
                     audios.addAll(emptyList())
+                    setState {
+                        copy(
+                            audioState = AudioState.Error(
+                                errorMessage = "${result.errorTitle} - ${result.errorMessage}",
+                            ),
+                        )
+                    }
                 }
             }
         }

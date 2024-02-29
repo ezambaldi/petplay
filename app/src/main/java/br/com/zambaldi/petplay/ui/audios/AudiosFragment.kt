@@ -74,19 +74,8 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
     ): View {
         addViewStateObservables()
         addViewEffectObservables()
-
-//        for (i in 1..10) {
-//            audiosViewModel.intent((AudiosViewModel.ViewIntent.AddAudio(
-//                Audio(
-//                    name = "Audio " + i,
-//                    path = ""
-//                )
-//            )))
-//        }
-
         fetchAudioList()
         return updateCompose()
-
     }
 
     private fun fetchAudioList(
@@ -107,11 +96,6 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
 
     private fun addAudio(audio: Audio) {
         audiosViewModel.intent(AudiosViewModel.ViewIntent.AddAudio(audio))
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-//        _binding = null
     }
 
     @Composable
