@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -139,7 +140,7 @@ fun AudioListScreen(
                                     ),
                                     leadingIcon = {
                                         Icon(
-                                            imageVector = Icons.Default.Build,
+                                            painterResource(id = R.drawable.ic_launcher_foreground),
                                             contentDescription = "",
                                             tint = colorResource(android.R.color.holo_green_light),
                                             modifier = Modifier
@@ -285,16 +286,14 @@ fun TopMessage(
     scope: CoroutineScope,
     errorSnackBarHostState: SnackbarHostState,
 ) {
-    val backColor = colorResource(id = R.color.md_theme_dark_onTertiary)
-    val textColor = colorResource(id = R.color.md_theme_dark_onPrimary)
     LaunchedEffect(Unit) {
         scope.launch {
             errorSnackBarHostState.showCustomSnackBar(
                 message = message,
                 duration = SnackbarDuration.Short,
-                backgroundColor = backColor,
-                textColor = textColor,
-                drawableRes = R.drawable.ic_launcher_foreground,
+                backgroundColor = typeMessage.color,
+                textColor = Color.White,
+                drawableRes = typeMessage.image,
                 snackBarPosition = SnackBarVisualsCustom.Companion.SnackBarPosition.TOP
             )
         }
@@ -436,7 +435,6 @@ fun AudioScreenSuccess(
 
                 }
             }
-//            if(state is AudioState.Loaded) {
                 var message = ""
                 if(state.isShowTopMessage) {
                     message = if(state.typeMessage == TypeMessage.SUCCESS)
@@ -450,8 +448,6 @@ fun AudioScreenSuccess(
 
                     )
                 }
-//            }
-
         }
     }
 
@@ -468,7 +464,7 @@ fun AlertDialogWithBtn(
     if (openDialog.value) {
         AlertDialog(
             icon = {
-//                Icon(icon, contentDescription = "Example Icon")
+                Icon(painterResource(id = R.drawable.ic_launcher_foreground), contentDescription = "default")
             },
             title = {
                 Text(text = dialogTitle)
