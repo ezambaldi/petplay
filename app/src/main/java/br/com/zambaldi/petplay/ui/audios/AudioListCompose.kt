@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -38,7 +37,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -60,6 +60,7 @@ import br.com.zambaldi.petplay.R
 import br.com.zambaldi.petplay.models.Audio
 import br.com.zambaldi.petplay.utils.SnackBarContainer
 import br.com.zambaldi.petplay.utils.SnackBarVisualsCustom
+import br.com.zambaldi.petplay.utils.TypeMessage
 import br.com.zambaldi.petplay.utils.showCustomSnackBar
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
@@ -373,10 +374,9 @@ fun AudioScreenSuccess(
 ) {
     val scope = rememberCoroutineScope()
     val errorSnackBarHostState = remember { SnackbarHostState() }
-
-    var showTopMessage by remember { mutableStateOf(false) }
-    var topMessage = ""
-
+    val openDialog = remember { mutableStateOf(false) }
+    val audioToDelete = remember { mutableIntStateOf(0) }
+    val audioName = remember { mutableStateOf("") }
 
     val audios: List<Audio> = state.data
     Column(
@@ -396,6 +396,7 @@ fun AudioScreenSuccess(
                             .fillMaxWidth()
                             .padding(8.dp)
                     ) {
+
                         Image(
                             painter = painterResource(id = R.drawable.ic_play),
                             contentDescription = stringResource(id = R.string.touch_for_play),
@@ -413,42 +414,45 @@ fun AudioScreenSuccess(
                         )
                         Spacer(Modifier.weight(1f))
 
-                        val openDialog = remember { mutableStateOf(false) }
-                        if (openDialog.value) {
-                            AlertDialogWithBtn(
-                                onConfirmation = {
-                                    deleteAudio(audio.id)
-                                },
-                                dialogTitle = audio.name,
-                                dialogText = stringResource(id = R.string.msg_remove_item),
-                            )
-                        }
                         Image(
                             painter = painterResource(id = R.drawable.ic_remove),
                             contentDescription = stringResource(id = R.string.touch_for_remove),
                             modifier = modifier
                                 .clickable {
+                                    audioToDelete.value = audio.id
+                                    audioName.value = audio.name
                                     openDialog.value = true
                                 }
                         )
                     }
-
                 }
             }
-                var message = ""
-                if(state.isShowTopMessage) {
-                    message = if(state.typeMessage == TypeMessage.SUCCESS)
-                        stringResource(id = R.string.top_message_success) else
-                        stringResource(id = R.string.top_message_error) + " (${state.topMessage}) "
-                    TopMessage(
-                        message = message,
-                        typeMessage = state.typeMessage,
-                        scope = scope,
-                        errorSnackBarHostState = errorSnackBarHostState,
-
-                    )
-                }
         }
+    }
+
+    var message = ""
+    if(state.isShowTopMessage) {
+        message = if(state.typeMessage == TypeMessage.SUCCESS)
+            stringResource(id = R.string.top_message_success) else
+            stringResource(id = R.string.top_message_error) + " (${state.topMessage}) "
+        TopMessage(
+            message = message,
+            typeMessage = state.typeMessage,
+            scope = scope,
+            errorSnackBarHostState = errorSnackBarHostState,
+
+            )
+    }
+
+    if (openDialog.value) {
+        AlertDialogWithBtn(
+            onConfirmation = {
+                deleteAudio(audioToDelete.value)
+            },
+            dialogTitle = audioName.value,
+            dialogText = stringResource(id = R.string.msg_remove_item),
+            openDialog = openDialog,
+        )
     }
 
     SnackBarContainer(snackBarHostState = errorSnackBarHostState)
@@ -459,9 +463,10 @@ fun AlertDialogWithBtn(
     onConfirmation: () -> Unit,
     dialogTitle: String,
     dialogText: String,
+    openDialog: MutableState<Boolean> = mutableStateOf(false),
 ) {
-    val openDialog = remember { mutableStateOf(true) }
-    if (openDialog.value) {
+//    val openDialog = remember { mutableStateOf(true) }
+//    if (openDialog.value) {
         AlertDialog(
             icon = {
                 Icon(painterResource(id = R.drawable.ic_launcher_foreground), contentDescription = "default")
@@ -495,7 +500,7 @@ fun AlertDialogWithBtn(
                 }
             }
         )
-    }
+//    }
 
 }
 

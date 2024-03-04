@@ -1,4 +1,4 @@
-package br.com.zambaldi.petplay.ui.audios
+package br.com.zambaldi.petplay.utils
 
 import android.media.Image
 import androidx.annotation.DrawableRes
