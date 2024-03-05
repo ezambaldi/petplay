@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import br.com.zambaldi.petplay.R
 import br.com.zambaldi.petplay.models.Audio
+import br.com.zambaldi.petplay.utils.TopMessageState
 import br.com.zambaldi.petplay.utils.TypeMessage
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -32,6 +33,7 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
                 audiosViewModel.state.collectAsState().let { state ->
                     SetScreen(
                         state = state.value.audioState,
+                        topMessageState = state.value.topMessageState,
                         callFetch = ::fetchAudioList,
                         deleteAudio = ::deleteAudio,
                         addAudio = ::addAudio,
@@ -54,6 +56,17 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
 
                         }
                     }
+                    map { it.topMessageState }.distinctUntilChanged().collect {
+                        when (it) {
+                            is TopMessageState.Default -> {
+                                updateCompose()
+                            }
+                            else -> {
+                                updateCompose()
+                            }
+
+                        }
+                    }
                 }
             }
         }
@@ -63,6 +76,7 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 audiosViewModel.viewEffect.collect { effect ->
+
                 }
             }
         }
@@ -84,11 +98,7 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
         topMessage: String = "",
         typeMessage: TypeMessage = TypeMessage.INFO
     ) {
-        audiosViewModel.intent(AudiosViewModel.ViewIntent.FetchAudioList(
-            isShowTopMessage = isShowTopMessage,
-            topMessage = topMessage,
-            typeMessage = typeMessage
-        ))
+        audiosViewModel.intent(AudiosViewModel.ViewIntent.FetchAudioList)
     }
 
     private fun deleteAudio(id: Int = 0) {
@@ -102,12 +112,14 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
     @Composable
     private fun SetScreen(
         state: AudioState,
+        topMessageState: TopMessageState,
         callFetch: () -> Unit,
         deleteAudio: (id: Int) -> Unit,
         addAudio: (Audio) -> Unit,
     ) {
         AudioListScreen(
             state = state,
+            topMessageState = topMessageState,
             callFetch = callFetch,
             deleteAudio = deleteAudio,
             addAudio = addAudio,

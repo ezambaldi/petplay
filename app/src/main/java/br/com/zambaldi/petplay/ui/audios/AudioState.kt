@@ -6,11 +6,11 @@ import br.com.zambaldi.petplay.utils.TypeMessage
 sealed class AudioState {
     object Default : AudioState()
     object Loading : AudioState()
+    object Error : AudioState()
     data class Loaded(
         val data: List<Audio>,
-        val isShowTopMessage: Boolean = false,
-        val topMessage: String = "",
-        val typeMessage: TypeMessage = TypeMessage.INFO
+//        val isShowTopMessage: Boolean = false,
+//        val topMessage: String = "",
+//        val typeMessage: TypeMessage = TypeMessage.INFO
     ) : AudioState()
-    data class Error(val errorMessage: String = "") : AudioState()
 }
