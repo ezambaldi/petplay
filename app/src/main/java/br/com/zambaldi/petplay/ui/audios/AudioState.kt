@@ -9,8 +9,5 @@ sealed class AudioState {
     object Error : AudioState()
     data class Loaded(
         val data: List<Audio>,
-//        val isShowTopMessage: Boolean = false,
-//        val topMessage: String = "",
-//        val typeMessage: TypeMessage = TypeMessage.INFO
     ) : AudioState()
 }

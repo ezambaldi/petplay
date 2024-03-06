@@ -33,11 +33,6 @@ class AudiosViewModel(
                             audioState = AudioState.Loaded(
                                 audios,
                             ),
-                            topMessageState = if(audios.isEmpty()) TopMessageState.Show(
-                                message = "No audios found!",
-                                typeMessage = TypeMessage.INFO,
-                            ) else TopMessageState.Default,
-
                         )
                     }
                 }
@@ -110,7 +105,7 @@ class AudiosViewModel(
     data class ViewState(
         var audioList: MutableList<Audio> = mutableStateListOf(),
         val audioState: AudioState = AudioState.Default,
-        val topMessageState: TopMessageState = TopMessageState.Default
+        val topMessageState: TopMessageState = TopMessageState.Default,
     ) : BaseViewState
 
     sealed class ViewEffect : BaseViewEffect {
@@ -123,6 +118,7 @@ class AudiosViewModel(
         data class DeleteAudio(val id: Int): ViewIntent()
         data class AddAudio(val audio: Audio): ViewIntent()
         object SetStateDefault: ViewIntent()
+        object SetTopMessageDefault: ViewIntent()
     }
 
     override fun inicialState(): ViewState = ViewState()
@@ -133,6 +129,7 @@ class AudiosViewModel(
             is ViewIntent.AddAudio -> { addAudio(intent.audio) }
             is ViewIntent.DeleteAudio -> { deleteAudio(intent.id) }
             is ViewIntent.SetStateDefault -> { setStateDefault() }
+            is ViewIntent.SetTopMessageDefault -> { setTopMessageStateDefault() }
         }
     }
 

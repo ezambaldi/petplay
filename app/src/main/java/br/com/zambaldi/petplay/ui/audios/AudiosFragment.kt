@@ -49,24 +49,22 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
                 launch {
                     map { it.audioState }.distinctUntilChanged().collect {
                         when (it) {
-                            is AudioState.Default -> {}
-                            else -> {
-                                updateCompose()
-                            }
-
-                        }
-                    }
-                    map { it.topMessageState }.distinctUntilChanged().collect {
-                        when (it) {
-                            is TopMessageState.Default -> {
-                                updateCompose()
+                            is AudioState.Default -> {
                             }
                             else -> {
                                 updateCompose()
                             }
-
                         }
                     }
+//                    map { it.topMessageState }.distinctUntilChanged().collect {
+//                        when (it) {
+//                            is TopMessageState.Default -> { }
+//                            else -> {
+//                                updateCompose()
+//                            }
+//
+//                        }
+//                    }
                 }
             }
         }
@@ -93,11 +91,7 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
         return updateCompose()
     }
 
-    private fun fetchAudioList(
-        isShowTopMessage: Boolean = false,
-        topMessage: String = "",
-        typeMessage: TypeMessage = TypeMessage.INFO
-    ) {
+    private fun fetchAudioList() {
         audiosViewModel.intent(AudiosViewModel.ViewIntent.FetchAudioList)
     }
 
@@ -107,6 +101,10 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
 
     private fun addAudio(audio: Audio) {
         audiosViewModel.intent(AudiosViewModel.ViewIntent.AddAudio(audio))
+    }
+
+    private fun setTopMessageDefault() {
+        audiosViewModel.intent(AudiosViewModel.ViewIntent.SetTopMessageDefault)
     }
 
     @Composable

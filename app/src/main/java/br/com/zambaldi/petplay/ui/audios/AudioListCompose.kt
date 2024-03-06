@@ -88,17 +88,8 @@ fun AudioListScreen(
     val scope = rememberCoroutineScope()
     val errorSnackBarHostState = remember { SnackbarHostState() }
 
-    if(topMessageState is TopMessageState.Show) {
-        TopMessage(
-            message = topMessageState.message,
-            typeMessage = topMessageState.typeMessage,
-            scope = scope,
-            errorSnackBarHostState = errorSnackBarHostState,
-        )
-    }
-
     Scaffold(
-        topBar = { },
+        topBar = {},
         floatingActionButton = {
             var onDismiss = remember { mutableStateOf(false) }
             val txtFieldError = remember { mutableStateOf("") }
@@ -230,6 +221,7 @@ fun AudioListScreen(
                         vertical = 1.dp,
                     )
             ) {
+
                 val context = LocalContext.current
                 Box(
                     modifier = modifier
@@ -247,16 +239,30 @@ fun AudioListScreen(
                                     state = state,
                                     deleteAudio = deleteAudio,
                                 )
+                            } else {
+                                AudioScreenEmpty(
+                                    modifier = modifier
+                                )
                             }
                         }
                         else -> {}
                     }
+                    SnackBarContainer(snackBarHostState = errorSnackBarHostState)
                 }
             }
         }
     )
 
-    SnackBarContainer(snackBarHostState = errorSnackBarHostState)
+    if(topMessageState is TopMessageState.Show) {
+        TopMessage(
+            message = topMessageState.message,
+            typeMessage = topMessageState.typeMessage,
+            scope = scope,
+            errorSnackBarHostState = errorSnackBarHostState,
+        )
+    }
+
+
 
 }
 
@@ -386,7 +392,6 @@ fun AudioScreenSuccess(
         }
     }
 
-
     if (openDialog.value) {
         AlertDialogWithBtn(
             onConfirmation = {
@@ -440,6 +445,28 @@ fun AlertDialogWithBtn(
                 }
             }
         )
-//    }
+}
 
+@Composable
+fun AudioScreenEmpty(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            contentDescription = stringResource(id = R.string.empty_screen),
+        )
+        Text(
+            text = stringResource(id = R.string.empty_screen),
+            style = bodyLarge,
+            color = colorResource(id = R.color.md_theme_dark_onTertiary),
+            modifier = modifier
+                .padding(start = 4.dp)
+        )
+    }
 }
