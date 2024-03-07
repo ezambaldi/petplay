@@ -4,14 +4,15 @@ import br.com.zambaldi.petplay.models.Group
 import br.com.zambaldi.petplay.providers.datasource.local.entity.GroupDomain
 import br.com.zambaldi.petplay.providers.datasource.repository.LocalGroupRepository
 import br.com.zambaldi.petplay.providers.mappers.GroupMapper
+import com.example.myapplicationtest.bases.GenericResult
 
 class GroupUseCaseImpl(
     private val localGroupRepository: LocalGroupRepository,
     private val groupMapper: GroupMapper,
     ): GroupUseCase {
 
-    override suspend fun addGroup(group: Group) {
-        localGroupRepository.addGroup(
+    override suspend fun addGroup(group: Group): GenericResult<String> {
+        return localGroupRepository.addGroup(
             GroupDomain(
                 id = group.id,
                 name = group.name,
@@ -23,11 +24,19 @@ class GroupUseCaseImpl(
         )
     }
 
-    override suspend fun getGroups(): List<Group> {
-        return groupMapper.toDomain(localGroupRepository.getGroups())
+    override suspend fun getGroups(): GenericResult<List<Group>> {
+        val result = localGroupRepository.getGroups()
+        return when (result) {
+            is GenericResult.Success -> {
+                GenericResult.Success(groupMapper.toDomain(result.data))
+            }
+            is GenericResult.Error -> {
+                GenericResult.Error(result.errorMessage, result.errorTitle)
+            }
+        }
     }
 
-    override suspend fun deleteGroup(id: Int) {
-        localGroupRepository.deleteGroup(id)
+    override suspend fun deleteGroup(id: Int): GenericResult<String> {
+        return localGroupRepository.deleteGroup(id)
     }
 }

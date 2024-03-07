@@ -15,7 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import br.com.zambaldi.petplay.R
 import br.com.zambaldi.petplay.models.Audio
 import br.com.zambaldi.petplay.utils.TopMessageState
-import br.com.zambaldi.petplay.utils.TypeMessage
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -56,15 +55,6 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
                             }
                         }
                     }
-//                    map { it.topMessageState }.distinctUntilChanged().collect {
-//                        when (it) {
-//                            is TopMessageState.Default -> { }
-//                            else -> {
-//                                updateCompose()
-//                            }
-//
-//                        }
-//                    }
                 }
             }
         }

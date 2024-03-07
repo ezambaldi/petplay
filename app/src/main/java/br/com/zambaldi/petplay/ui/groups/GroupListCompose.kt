@@ -1,4 +1,4 @@
-package br.com.zambaldi.petplay.ui.audios
+package br.com.zambaldi.petplay.ui.groups
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplay.R
-import br.com.zambaldi.petplay.models.Audio
+import br.com.zambaldi.petplay.models.Group
 import br.com.zambaldi.petplay.ui.AlertDialogWithBtn
 import br.com.zambaldi.petplay.ui.ScreenEmpty
 import br.com.zambaldi.petplay.ui.ScreenLoading
@@ -61,12 +61,12 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
-fun AudioListScreen(
-    state: AudioState,
+fun GroupListScreen(
+    state: GroupState,
     topMessageState: TopMessageState,
     callFetch: () -> Unit,
-    deleteAudio: (id: Int) -> Unit,
-    addAudio: (Audio) -> Unit,
+    deleteGroup: (id: Int) -> Unit,
+    addGroup: (Group) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -106,7 +106,7 @@ fun AudioListScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = stringResource(id = R.string.title_add_audio),
+                                        text = stringResource(id = R.string.title_add_group),
                                         style = bodyLargeBold
                                     )
                                     Icon(
@@ -165,10 +165,9 @@ fun AudioListScreen(
                                                 txtFieldError.value = msgError
                                                 return@Button
                                             }
-                                            addAudio(
-                                                Audio(
+                                            addGroup(
+                                                Group(
                                                     name = txtField.value,
-                                                    path = "test",
                                                 )
                                             )
                                             onDismiss.value = false
@@ -225,14 +224,14 @@ fun AudioListScreen(
                         .padding(8.dp)
                 ) {
                     when (state) {
-                        is AudioState.Loading -> {
+                        is GroupState.Loading -> {
                             ScreenLoading()
                         }
-                        is AudioState.Loaded -> {
+                        is GroupState.Loaded -> {
                             if(state.data.isNotEmpty()) {
-                                AudioScreenSuccess(
+                                GroupScreenSuccess(
                                     state = state,
-                                    deleteAudio = deleteAudio,
+                                    deleteGroup = deleteGroup,
                                 )
                             } else {
                                 ScreenEmpty(
@@ -251,16 +250,16 @@ fun AudioListScreen(
 }
 
 @Composable
-fun AudioScreenSuccess(
-    state: AudioState.Loaded,
-    deleteAudio: (id: Int) -> Unit,
+fun GroupScreenSuccess(
+    state: GroupState.Loaded,
+    deleteGroup: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val openDialog = remember { mutableStateOf(false) }
-    val audioToDelete = remember { mutableIntStateOf(0) }
-    val audioName = remember { mutableStateOf("") }
+    val groupToDelete = remember { mutableIntStateOf(0) }
+    val groupName = remember { mutableStateOf("") }
 
-    val audios: List<Audio> = state.data
+    val groups: List<Group> = state.data
     Column(
         horizontalAlignment = Alignment.Start,
         modifier = modifier
@@ -271,7 +270,7 @@ fun AudioScreenSuccess(
                 .verticalScroll(rememberScrollState())
         ) {
             Column {
-                audios.forEach { audio ->
+                groups.forEach { group ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = modifier
@@ -288,7 +287,7 @@ fun AudioScreenSuccess(
                                 }
                         )
                         Text(
-                            text = audio.name,
+                            text = group.name,
                             style = bodyLarge,
                             color = colorResource(id = R.color.md_theme_dark_onTertiary),
                             modifier = modifier
@@ -301,8 +300,8 @@ fun AudioScreenSuccess(
                             contentDescription = stringResource(id = R.string.touch_for_remove),
                             modifier = modifier
                                 .clickable {
-                                    audioToDelete.value = audio.id
-                                    audioName.value = audio.name
+                                    groupToDelete.value = group.id
+                                    groupName.value = group.name
                                     openDialog.value = true
                                 }
                         )
@@ -315,13 +314,11 @@ fun AudioScreenSuccess(
     if (openDialog.value) {
         AlertDialogWithBtn(
             onConfirmation = {
-                deleteAudio(audioToDelete.intValue)
+                deleteGroup(groupToDelete.intValue)
             },
-            dialogTitle = audioName.value,
+            dialogTitle = groupName.value,
             dialogText = stringResource(id = R.string.msg_remove_item),
             openDialog = openDialog,
         )
     }
-
 }
-

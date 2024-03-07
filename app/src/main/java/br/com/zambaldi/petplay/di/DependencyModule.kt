@@ -63,7 +63,7 @@ object DependencyModule {
             CoroutineContextProvider.Default()
         }
         factory<LocalAudioRepository> { LocalAudioRepositoryImpl(get(), get()) }
-        factory<LocalGroupRepository> { LocalGroupRepositoryImpl(get()) }
+        factory<LocalGroupRepository> { LocalGroupRepositoryImpl(get(), get()) }
         factory<LocalAudioGroupRepository> { LocalAudioGroupRepositoryImpl(get()) }
     }
 

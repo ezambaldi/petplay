@@ -16,9 +16,6 @@ class AudiosViewModel(
     private val audioUseCase: AudioUseCase
 ) : BaseMviViewModel<AudiosViewModel.ViewIntent, AudiosViewModel.ViewState, AudiosViewModel.ViewEffect>() {
 
-    private val _topMessageState by lazy { MutableLiveData<TopMessageState>() }
-    val topMessageState: LiveData<TopMessageState> = _topMessageState
-
     private fun fetchAudioList() {
         setState { copy(audioState = AudioState.Loading) }
         val audios: MutableList<Audio> = listOf<Audio>().toMutableList()
@@ -67,6 +64,7 @@ class AudiosViewModel(
                     setState { copy(topMessageState = TopMessageState.Show(
                         message = "Audio removed successfully!",
                         typeMessage = TypeMessage.SUCCESS,
+                        setAsDefault = { setTopMessageStateDefault() }
                     )) }
                     fetchAudioList()
                 }
@@ -74,6 +72,7 @@ class AudiosViewModel(
                     setState { copy(topMessageState = TopMessageState.Show(
                         message = "Error: ${result.errorMessage}",
                         typeMessage = TypeMessage.ERROR,
+                        setAsDefault = { setTopMessageStateDefault() }
                     )) }
                     fetchAudioList()
                 }
@@ -88,6 +87,7 @@ class AudiosViewModel(
                     setState { copy(topMessageState = TopMessageState.Show(
                         message = "Audio added successfully!",
                         typeMessage = TypeMessage.SUCCESS,
+                        setAsDefault = { setTopMessageStateDefault() }
                     )) }
                     fetchAudioList()
                 }
@@ -95,6 +95,7 @@ class AudiosViewModel(
                     setState { copy(topMessageState = TopMessageState.Show(
                         message = "Error: ${result.errorMessage}",
                         typeMessage = TypeMessage.ERROR,
+                        setAsDefault = { setTopMessageStateDefault() }
                     )) }
                     fetchAudioList()
                 }

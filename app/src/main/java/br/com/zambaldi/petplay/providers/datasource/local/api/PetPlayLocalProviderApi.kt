@@ -13,9 +13,9 @@ interface PetPlayLocalProviderApi {
     suspend fun deleteAudio(id: Int): Resource<String>
 
     //GROUP
-    suspend fun addGroup(groupDomain: GroupDomain)
-    suspend fun getGroups(): List<GroupDomain>
-    suspend fun deleteGroup(id: Int)
+    suspend fun addGroup(groupDomain: GroupDomain): Resource<String>
+    suspend fun getGroups(): Resource<List<GroupDomain>>
+    suspend fun deleteGroup(id: Int): Resource<String>
 
     //AUDIO GROUP
     suspend fun addAudioGroup(audiosGroupDomain: AudiosGroupDomain)

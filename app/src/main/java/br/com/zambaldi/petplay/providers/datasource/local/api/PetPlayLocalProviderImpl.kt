@@ -41,16 +41,30 @@ class PetPlayLocalProviderImpl(
 
     }
 
-    override suspend fun addGroup(groupDomain: GroupDomain) {
-        groupDAO.add(groupDomain)
+    override suspend fun addGroup(groupDomain: GroupDomain): Resource<String> {
+        return try {
+            groupDAO.add(groupDomain)
+            Resource.success("")
+        } catch (e: Exception) {
+            Resource.error(e.toString(), "")
+        }
     }
 
-    override suspend fun getGroups(): List<GroupDomain> {
-        return groupDAO.getGroups()
+    override suspend fun getGroups(): Resource<List<GroupDomain>> {
+        return  try {
+            Resource.success(groupDAO.getGroups())
+        } catch (e: Exception) {
+            Resource.error("Error. Try again ($e)", listOf()) }
     }
 
-    override suspend fun deleteGroup(id: Int) {
-        groupDAO.deleteGroup(id)
+    override suspend fun deleteGroup(id: Int): Resource<String> {
+        return try {
+            groupDAO.deleteGroup(id)
+            Resource.success("")
+        } catch (e: Exception) {
+            Resource.error(e.toString(), "")
+        }
+
     }
 
     override suspend fun addAudioGroup(audiosGroupDomain: AudiosGroupDomain) {
