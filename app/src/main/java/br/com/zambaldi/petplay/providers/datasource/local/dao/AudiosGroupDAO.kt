@@ -12,8 +12,8 @@ interface AudiosGroupDAO {
     @Insert
     fun add(audiosGroupDomain: AudiosGroupDomain)
 
-    @Query("SELECT * FROM audiosGroup ORDER BY `order`")
-    fun getAudiosGroup(): List<AudiosGroupDomain>
+    @Query("SELECT * FROM audiosGroup WHERE idGroup = :id ORDER BY `order`")
+    fun getAudiosGroup(id: Int): List<AudiosGroupDomain>
 
     @Query("DELETE FROM audiosGroup WHERE id = :id")
     fun deleteAudioGroup(id: Int)

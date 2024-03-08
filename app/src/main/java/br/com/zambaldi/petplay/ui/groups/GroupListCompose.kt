@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -31,11 +32,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -249,15 +253,20 @@ fun GroupListScreen(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupScreenSuccess(
     state: GroupState.Loaded,
     deleteGroup: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val selectedGroup = remember { mutableIntStateOf(0) }
     val openDialog = remember { mutableStateOf(false) }
     val groupToDelete = remember { mutableIntStateOf(0) }
     val groupName = remember { mutableStateOf("") }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
 
     val groups: List<Group> = state.data
     Column(
@@ -279,11 +288,13 @@ fun GroupScreenSuccess(
                     ) {
 
                         Image(
-                            painter = painterResource(id = R.drawable.ic_play),
-                            contentDescription = stringResource(id = R.string.touch_for_play),
+                            painter = painterResource(id = R.drawable.ic_add),
+                            contentDescription = stringResource(id = R.string.touch_for_include_audios),
                             modifier = modifier
                                 .clickable {
-                                    //todo
+                                    selectedGroup.value = group.id
+                                    showBottomSheet = true
+
                                 }
                         )
                         Text(
@@ -321,4 +332,16 @@ fun GroupScreenSuccess(
             openDialog = openDialog,
         )
     }
+
+    if (showBottomSheet) {
+        GroupListAudiosBottomSheet(
+            groupId = selectedGroup.intValue,
+            sheetState = sheetState,
+            coroutineScope = scope,
+            onNegativeButtonOrCloseClick = {
+                showBottomSheet = false
+            }
+        )
+    }
+
 }

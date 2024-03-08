@@ -3,6 +3,7 @@ package br.com.zambaldi.petplay.models
 data class Group(
     val id: Int = 0,
     val name: String = "",
+    var audios: List<AudiosGroup> = listOf(),
     val dateTimeStart: String = "",
     val dateTimeFinish: String = "",
     val intervalSecond: Int = 1,

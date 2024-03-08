@@ -15,6 +15,7 @@ import br.com.zambaldi.petplay.providers.mappers.AudioGroupMapper
 import br.com.zambaldi.petplay.providers.mappers.AudioMapper
 import br.com.zambaldi.petplay.providers.mappers.GroupMapper
 import br.com.zambaldi.petplay.ui.audios.AudiosViewModel
+import br.com.zambaldi.petplay.ui.groups.GroupsViewModel
 import br.com.zambaldi.petplay.usecases.AudioGroupUseCase
 import br.com.zambaldi.petplay.usecases.AudioGroupUseCaseImpl
 import br.com.zambaldi.petplay.usecases.AudioUseCase
@@ -42,10 +43,10 @@ object DependencyModule {
 
     private val useCaseModule = module {
         factory<AudioUseCase> {
-            AudioUseCaseImpl(get(), get(), get())
+            AudioUseCaseImpl(get(), get())
         }
         factory<GroupUseCase> {
-            GroupUseCaseImpl(get(), get())
+            GroupUseCaseImpl(get(), get(), get(), get())
         }
         factory<AudioGroupUseCase> {
             AudioGroupUseCaseImpl(get(), get())
@@ -64,11 +65,12 @@ object DependencyModule {
         }
         factory<LocalAudioRepository> { LocalAudioRepositoryImpl(get(), get()) }
         factory<LocalGroupRepository> { LocalGroupRepositoryImpl(get(), get()) }
-        factory<LocalAudioGroupRepository> { LocalAudioGroupRepositoryImpl(get()) }
+        factory<LocalAudioGroupRepository> { LocalAudioGroupRepositoryImpl(get(), get()) }
     }
 
     private val viewModelModule = module {
         viewModel { AudiosViewModel(get()) }
+        viewModel { GroupsViewModel(get()) }
     }
 
     val appModules = dbModule + useCaseModule + providerModule + viewModelModule

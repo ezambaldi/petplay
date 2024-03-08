@@ -11,7 +11,6 @@ import kotlinx.coroutines.withContext
 class AudioUseCaseImpl(
     private val localAudioRepository: LocalAudioRepository,
     private val audioMapper: AudioMapper,
-    private val coroutineContextProvider: CoroutineContextProvider,
 ): AudioUseCase {
 
     override suspend fun addAudio(audio: Audio): GenericResult<String> {

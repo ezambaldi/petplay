@@ -9,6 +9,7 @@ data class AudioDomain(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val name: String = "",
-    val path: String = ""
+    val path: String = "",
+    var isSelected: Boolean = false
 
 )
