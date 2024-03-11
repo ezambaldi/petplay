@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplay.R
+import br.com.zambaldi.petplay.models.Audio
+import br.com.zambaldi.petplay.models.AudiosGroup
 import br.com.zambaldi.petplay.models.Group
 import br.com.zambaldi.petplay.ui.AlertDialogWithBtn
 import br.com.zambaldi.petplay.ui.ScreenEmpty
@@ -71,6 +73,8 @@ fun GroupListScreen(
     callFetch: () -> Unit,
     deleteGroup: (id: Int) -> Unit,
     addGroup: (Group) -> Unit,
+    deleteAudioGroup: (id: Int) -> Unit,
+    addAudioGroup: (AudiosGroup) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -156,7 +160,7 @@ fun GroupListScreen(
                                     value = txtField.value,
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                                     onValueChange = {
-                                        txtField.value = it.take(10)
+                                        txtField.value = it.take(40)
                                     })
 
                                 Spacer(modifier = Modifier.height(20.dp))

@@ -70,7 +70,7 @@ object DependencyModule {
 
     private val viewModelModule = module {
         viewModel { AudiosViewModel(get()) }
-        viewModel { GroupsViewModel(get()) }
+        viewModel { GroupsViewModel(get(), get(), get()) }
     }
 
     val appModules = dbModule + useCaseModule + providerModule + viewModelModule

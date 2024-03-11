@@ -152,7 +152,7 @@ fun AudioListScreen(
                                     value = txtField.value,
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                                     onValueChange = {
-                                        txtField.value = it.take(10)
+                                        txtField.value = it.take(40)
                                     })
 
                                 Spacer(modifier = Modifier.height(20.dp))

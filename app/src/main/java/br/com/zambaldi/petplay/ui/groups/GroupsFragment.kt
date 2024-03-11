@@ -13,7 +13,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import br.com.zambaldi.petplay.R
+import br.com.zambaldi.petplay.models.Audio
+import br.com.zambaldi.petplay.models.AudiosGroup
 import br.com.zambaldi.petplay.models.Group
+import br.com.zambaldi.petplay.ui.audios.AudiosViewModel
 import br.com.zambaldi.petplay.utils.TopMessageState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -36,6 +39,8 @@ class GroupsFragment : Fragment(R.layout.fragment_groups) {
                         callFetch = ::fetchGroupList,
                         deleteGroup = ::deleteGroup,
                         addGroup = ::addGroup,
+                        deleteAudioGroup = ::deleteAudioGroup,
+                        addAudioGroup = ::addAudioGroup,
                     )
                 }
             }
@@ -77,6 +82,7 @@ class GroupsFragment : Fragment(R.layout.fragment_groups) {
     ): View {
         addViewStateObservables()
         addViewEffectObservables()
+        fetchAudioList()
         fetchGroupList()
         return updateCompose()
     }
@@ -85,12 +91,24 @@ class GroupsFragment : Fragment(R.layout.fragment_groups) {
         groupsViewModel.intent(GroupsViewModel.ViewIntent.FetchGroupList)
     }
 
+    private fun fetchAudioList() {
+        groupsViewModel.intent(GroupsViewModel.ViewIntent.FetchAudioList)
+    }
+
     private fun deleteGroup(id: Int = 0) {
         groupsViewModel.intent(GroupsViewModel.ViewIntent.DeleteGroup(id))
     }
 
+    private fun deleteAudioGroup(id: Int = 0) {
+        groupsViewModel.intent(GroupsViewModel.ViewIntent.DeleteAudioGroup(id))
+    }
+
     private fun addGroup(group: Group) {
         groupsViewModel.intent(GroupsViewModel.ViewIntent.AddGroup(group))
+    }
+
+    private fun addAudioGroup(audioGroup: AudiosGroup) {
+        groupsViewModel.intent(GroupsViewModel.ViewIntent.AddAudioGroup(audioGroup))
     }
 
     private fun setTopMessageDefault() {
@@ -104,6 +122,8 @@ class GroupsFragment : Fragment(R.layout.fragment_groups) {
         callFetch: () -> Unit,
         deleteGroup: (id: Int) -> Unit,
         addGroup: (Group) -> Unit,
+        deleteAudioGroup: (id: Int) -> Unit,
+        addAudioGroup: (AudiosGroup) -> Unit,
     ) {
         GroupListScreen(
             state = state,
@@ -111,6 +131,8 @@ class GroupsFragment : Fragment(R.layout.fragment_groups) {
             callFetch = callFetch,
             deleteGroup = deleteGroup,
             addGroup = addGroup,
+            deleteAudioGroup = deleteAudioGroup,
+            addAudioGroup = addAudioGroup,
         )
     }
 
