@@ -9,6 +9,6 @@ data class AudiosGroupDomain(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val order: Int = 0,
-    val idAudio: String,
-    val idGroup: String
+    val idAudio: Int,
+    val idGroup: Int,
 )

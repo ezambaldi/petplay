@@ -8,7 +8,7 @@ sealed class GroupState {
     object Loading : GroupState()
     object Error : GroupState()
     data class Loaded(
-        val data: List<Group>,
-        val audios: List<Audio>,
+        val data: MutableList<Group>,
+        val audios: MutableList<Audio>,
     ) : GroupState()
 }

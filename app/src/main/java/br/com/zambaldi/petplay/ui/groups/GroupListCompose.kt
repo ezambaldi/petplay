@@ -36,6 +36,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -240,6 +241,9 @@ fun GroupListScreen(
                                 GroupScreenSuccess(
                                     state = state,
                                     deleteGroup = deleteGroup,
+                                    deleteAudioGroup = deleteAudioGroup,
+                                    addAudioGroup = addAudioGroup,
+                                    callFetch = callFetch,
                                 )
                             } else {
                                 ScreenEmpty(
@@ -263,14 +267,20 @@ fun GroupScreenSuccess(
     state: GroupState.Loaded,
     deleteGroup: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
+    deleteAudioGroup: (id: Int) -> Unit,
+    addAudioGroup: (AudiosGroup) -> Unit,
+    callFetch: () -> Unit,
 ) {
-    val selectedGroup = remember { mutableIntStateOf(0) }
+    val selectedGroup = remember { mutableStateOf(Group()) }
     val openDialog = remember { mutableStateOf(false) }
     val groupToDelete = remember { mutableIntStateOf(0) }
     val groupName = remember { mutableStateOf("") }
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
+
+    val audios = state.audios
+    val audioGroup = remember { mutableStateOf(selectedGroup.value.audios) }
 
     val groups: List<Group> = state.data
     Column(
@@ -296,7 +306,8 @@ fun GroupScreenSuccess(
                             contentDescription = stringResource(id = R.string.touch_for_include_audios),
                             modifier = modifier
                                 .clickable {
-                                    selectedGroup.value = group.id
+                                    selectedGroup.value = group
+                                    audioGroup.value = group.audios
                                     showBottomSheet = true
 
                                 }
@@ -339,12 +350,18 @@ fun GroupScreenSuccess(
 
     if (showBottomSheet) {
         GroupListAudiosBottomSheet(
-            groupId = selectedGroup.intValue,
+            groupId = selectedGroup.value.id,
             sheetState = sheetState,
             coroutineScope = scope,
             onNegativeButtonOrCloseClick = {
                 showBottomSheet = false
-            }
+            },
+            audios = audios.toMutableList(),
+            audioGroup = audioGroup.value.toMutableList(),
+            deleteAudioGroup = deleteAudioGroup,
+            addAudioGroup = addAudioGroup,
+            callFetch = callFetch,
+
         )
     }
 

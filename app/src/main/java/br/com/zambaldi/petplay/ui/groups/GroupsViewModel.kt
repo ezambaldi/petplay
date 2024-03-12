@@ -37,7 +37,7 @@ class GroupsViewModel(
                         copy(
                             groupState = GroupState.Loaded(
                                 groups,
-                                audios = audioState.value ?: emptyList(),
+                                audios = audioState.value?.toMutableList()?: mutableListOf(),
                             ),
                         )
                     }
@@ -118,11 +118,11 @@ class GroupsViewModel(
         viewModelScope.launch {
             when (val result = audioGroupUseCase.deleteAudioGroup(id)) {
                 is GenericResult.Success -> {
-                    setState { copy(topMessageState = TopMessageState.Show(
-                        message = "Audio successfully disassociated!",
-                        typeMessage = TypeMessage.SUCCESS,
-                        setAsDefault = { setTopMessageStateDefault() }
-                    )) }
+//                    setState { copy(topMessageState = TopMessageState.Show(
+//                        message = "Audio successfully disassociated!",
+//                        typeMessage = TypeMessage.SUCCESS,
+//                        setAsDefault = { setTopMessageStateDefault() }
+//                    )) }
                     fetchGroupList()
                 }
                 is GenericResult.Error -> {
@@ -167,11 +167,11 @@ class GroupsViewModel(
                 )
             ) {
                 is GenericResult.Success -> {
-                    setState { copy(topMessageState = TopMessageState.Show(
-                        message = "Audio associated successfully!",
-                        typeMessage = TypeMessage.SUCCESS,
-                        setAsDefault = { setTopMessageStateDefault() }
-                    )) }
+//                    setState { copy(topMessageState = TopMessageState.Show(
+//                        message = "Audio associated successfully!",
+//                        typeMessage = TypeMessage.SUCCESS,
+//                        setAsDefault = { setTopMessageStateDefault() }
+//                    )) }
                     fetchGroupList()
                 }
                 is GenericResult.Error -> {
