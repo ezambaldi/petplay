@@ -1,14 +1,9 @@
 package br.com.zambaldi.petplay.ui.groups
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,66 +11,38 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplay.R
 import br.com.zambaldi.petplay.models.Audio
 import br.com.zambaldi.petplay.models.AudiosGroup
-import br.com.zambaldi.petplay.models.Group
-import br.com.zambaldi.petplay.ui.AlertDialogWithBtn
-import br.com.zambaldi.petplay.ui.ScreenEmpty
-import br.com.zambaldi.petplay.ui.ScreenLoading
-import br.com.zambaldi.petplay.ui.TopMessage
-import br.com.zambaldi.petplay.ui.audios.AudioScreenSuccess
-import br.com.zambaldi.petplay.ui.audios.AudioState
 import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
-import br.com.zambaldi.petplay.utils.SnackBarContainer
-import br.com.zambaldi.petplay.utils.TopMessageState
 import com.example.myapplicationtest.utils.bodyLarge
-import com.example.myapplicationtest.utils.bodyLargeBold
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -96,6 +63,11 @@ fun GroupListAudiosBottomSheet(
     callFetch: () -> Unit,
     applicationContext: android.content.Context,
 ) {
+    val scope = rememberCoroutineScope()
+    val startPlay = remember { mutableStateOf(false) }
+    val stopPlay = remember { mutableStateOf(false) }
+
+
     val onClose: () -> Unit = {
         coroutineScope.launch {
             sheetState.hide()
@@ -176,17 +148,40 @@ fun GroupListAudiosBottomSheet(
                                     .padding(8.dp)
                             ) {
 
-                                val imagePlay = if(audio.path.isNotEmpty()) R.drawable.ic_play else R.drawable.ic_play_gray
+                                var imagePlay = if(audio.path.isNotEmpty()) R.drawable.ic_play else R.drawable.ic_play_gray
+
+                                if(startPlay.value) {
+                                    imagePlay = R.drawable.ic_stop
+                                    LaunchedEffect(Unit) {
+                                        scope.launch {
+                                            if(audio.path.isNotEmpty()) {
+                                                val file = File(audio.path)
+                                                player.playFile(file)
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                                if(stopPlay.value) {
+                                    imagePlay = R.drawable.ic_play
+                                    stopPlay.value = false
+                                    LaunchedEffect(Unit) {
+                                        scope.launch {
+                                            player.stop()
+                                        }
+                                    }
+                                }
 
                                 Image(
                                     painter = painterResource(id = imagePlay),
                                     contentDescription = stringResource(id = R.string.touch_for_play),
                                     modifier = Modifier
                                         .clickable {
-                                            if(audio.path.isNotEmpty()) {
-                                                val file = File(audio.path)
-                                                player.playFile(file)
-                                            }                                        }
+                                            if(startPlay.value) {
+                                                startPlay.value = false
+                                                stopPlay.value = true
+                                            } else startPlay.value = true                                        }
                                 )
                                 Text(
                                     text = audio.name,

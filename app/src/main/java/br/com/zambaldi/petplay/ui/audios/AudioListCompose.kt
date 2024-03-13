@@ -66,6 +66,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.concurrent.timerTask
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 @Composable
@@ -394,9 +395,10 @@ fun AudioScreenSuccess(
                             .padding(8.dp)
                     ) {
 
-                        val imagePlay = if(audio.path.isNotEmpty()) R.drawable.ic_play else R.drawable.ic_play_gray
+                        var imagePlay = if(audio.path.isNotEmpty()) R.drawable.ic_play else R.drawable.ic_play_gray
 
                         if(startPlay.value) {
+                            imagePlay = R.drawable.ic_stop
                             LaunchedEffect(Unit) {
                                 scope.launch {
                                     if(audio.path.isNotEmpty()) {
@@ -407,7 +409,9 @@ fun AudioScreenSuccess(
                             }
                         }
 
+
                         if(stopPlay.value) {
+                            imagePlay = R.drawable.ic_play
                             stopPlay.value = false
                             LaunchedEffect(Unit) {
                                 scope.launch {
@@ -422,6 +426,7 @@ fun AudioScreenSuccess(
                             modifier = modifier
                                 .clickable {
                                     if(startPlay.value) {
+                                        startPlay.value = false
                                         stopPlay.value = true
                                     } else startPlay.value = true
                                 }
