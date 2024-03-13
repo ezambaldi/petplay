@@ -59,6 +59,7 @@ class PetPlayLocalProviderImpl(
 
     override suspend fun deleteGroup(id: Int): Resource<String> {
         return try {
+            audiosGroupDAO.deleteAudioGroupAll(id)
             groupDAO.deleteGroup(id)
             Resource.success("")
         } catch (e: Exception) {

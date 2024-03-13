@@ -129,6 +129,18 @@ fun GroupListAudiosBottomSheet(
                         .padding(8.dp)
                 )
             }
+
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "Select the audios to associate with the group",
+                style = bodyLarge,
+                color = colorResource(id = R.color.md_theme_dark_onTertiary),
+                modifier = Modifier
+                    .padding(start = 4.dp)
+            )
+            Spacer(Modifier.height(8.dp))
+
+
             Column(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier

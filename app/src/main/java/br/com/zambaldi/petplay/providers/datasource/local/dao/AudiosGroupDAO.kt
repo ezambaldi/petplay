@@ -18,4 +18,7 @@ interface AudiosGroupDAO {
     @Query("DELETE FROM audiosGroup WHERE id = :id")
     fun deleteAudioGroup(id: Int)
 
+    @Query("DELETE FROM audiosGroup WHERE idGroup = :groupId")
+    fun deleteAudioGroupAll(groupId: Int)
+
 }
