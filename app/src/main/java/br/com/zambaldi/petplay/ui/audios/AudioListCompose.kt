@@ -65,6 +65,8 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.concurrent.timerTask
+import kotlin.random.Random
 
 @Composable
 fun AudioListScreen(
@@ -84,24 +86,30 @@ fun AudioListScreen(
     val recorder by lazy {
         AndroidAudioRecorder(applicationContext)
     }
-    var audioFile: File? = null
+    var audioF: File? = null
+    val audioFile = remember {
+        mutableStateOf(audioF)
+    }
     val stopEnabled = remember { mutableStateOf(false) }
     val startRecord = remember { mutableStateOf(false) }
     val stopRecord = remember { mutableStateOf(false) }
+
+    val generatByRandom = Random(System.currentTimeMillis())
+    val randomNumber= generatByRandom.nextInt(0, 10)
 
     if(startRecord.value) {
         startRecord.value = false
         LaunchedEffect(Unit) {
             scope.launch {
-                File(applicationContext.cacheDir,"audio.mp3").also {
+                File(applicationContext.cacheDir,"audio${randomNumber}.mp3").also {
                     recorder.start(it)
-                    audioFile = it
+                    audioFile.value = it
                 }
             }
         }
     }
 
-    if(stopEnabled.value) {
+    if(stopRecord.value) {
         stopRecord.value = false
         LaunchedEffect(Unit) {
             scope.launch {
@@ -210,6 +218,7 @@ fun AudioListScreen(
                                                 stopEnabled.value = true
                                                 startRecord.value = true
                                             },
+                                            enabled = !stopEnabled.value,
                                             shape = RoundedCornerShape(50.dp),
                                             modifier = Modifier
                                                 .padding(horizontal = 4.dp)
@@ -221,7 +230,7 @@ fun AudioListScreen(
                                             )
                                         }
 
-                                    if(audioFile != null) colorIconRecord.value = android.R.color.holo_green_light else colorIconRecord.value = android.R.color.darker_gray
+                                    if(audioFile.value != null) colorIconRecord.value = android.R.color.holo_green_light else colorIconRecord.value = android.R.color.darker_gray
                                     Icon(
                                         painterResource(id = R.drawable.ic_launcher_foreground),
                                         contentDescription = "",
@@ -262,13 +271,13 @@ fun AudioListScreen(
                                             addAudio(
                                                 Audio(
                                                     name = txtField.value,
-                                                    path = audioFile?.path?: "",
+                                                    path = audioFile.value?.path?: "",
                                                 )
                                             )
                                             onDismiss.value = false
                                             txtField.value = ""
                                         },
-                                        enabled = audioFile != null,
+                                        enabled = audioFile.value != null,
                                         shape = RoundedCornerShape(50.dp),
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -328,7 +337,7 @@ fun AudioListScreen(
                                 AudioScreenSuccess(
                                     state = state,
                                     deleteAudio = deleteAudio,
-                                    applicationContext = applicationContext
+                                    applicationContext = applicationContext,
                                 )
                             } else {
                                 ScreenEmpty(
@@ -353,12 +362,18 @@ fun AudioScreenSuccess(
     deleteAudio: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
     val openDialog = remember { mutableStateOf(false) }
+    val startPlay = remember { mutableStateOf(false) }
+    val stopPlay = remember { mutableStateOf(false) }
     val audioToDelete = remember { mutableIntStateOf(0) }
     val audioName = remember { mutableStateOf("") }
     val player by lazy {
         AndroidAudioPlayer(applicationContext)
     }
+
+
+
 
     val audios: List<Audio> = state.data
     Column(
@@ -381,15 +396,34 @@ fun AudioScreenSuccess(
 
                         val imagePlay = if(audio.path.isNotEmpty()) R.drawable.ic_play else R.drawable.ic_play_gray
 
+                        if(startPlay.value) {
+                            LaunchedEffect(Unit) {
+                                scope.launch {
+                                    if(audio.path.isNotEmpty()) {
+                                        val file = File(audio.path)
+                                        player.playFile(file)
+                                    }
+                                }
+                            }
+                        }
+
+                        if(stopPlay.value) {
+                            stopPlay.value = false
+                            LaunchedEffect(Unit) {
+                                scope.launch {
+                                    player.stop()
+                                }
+                            }
+                        }
+
                         Image(
                             painter = painterResource(imagePlay),
                             contentDescription = stringResource(id = R.string.touch_for_play),
                             modifier = modifier
                                 .clickable {
-                                    if(audio.path.isNotEmpty()) {
-                                        val file = File(audio.path)
-                                        player.playFile(file)
-                                    }
+                                    if(startPlay.value) {
+                                        stopPlay.value = true
+                                    } else startPlay.value = true
                                 }
                         )
                         Text(
