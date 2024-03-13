@@ -111,6 +111,7 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
             callFetch = callFetch,
             deleteAudio = deleteAudio,
             addAudio = addAudio,
+            applicationContext = requireContext(),
         )
     }
 

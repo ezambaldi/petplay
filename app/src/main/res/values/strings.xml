@@ -18,6 +18,8 @@
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>
     <string name="btn_confirm">Confirm</string>
+    <string name="btn_start_recording">Start\nRecording</string>
+    <string name="btn_stop_recording">Stop\nRecording</string>
     <string name="btn_cancel">Cancel</string>
     <string name="title_add_audio">Add new audio</string>
     <string name="enter_name">Enter name</string>

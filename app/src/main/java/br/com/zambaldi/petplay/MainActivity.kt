@@ -3,11 +3,15 @@ package br.com.zambaldi.petplay
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import br.com.zambaldi.petplay.databinding.ActivityMainBinding
+import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
+import br.com.zambaldi.petplay.ui.recorders.AndroidAudioRecorder
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,6 +19,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        ActivityCompat.requestPermissions(this, arrayOf(
+            android.Manifest.permission.RECORD_AUDIO,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        ), 0)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

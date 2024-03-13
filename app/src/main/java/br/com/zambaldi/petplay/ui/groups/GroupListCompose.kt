@@ -361,6 +361,7 @@ fun GroupScreenSuccess(
     if (showBottomSheet.value) {
         GroupListAudiosBottomSheet(
             groupId = selectedGroup.value.id,
+            groupName = selectedGroup.value.name,
             sheetState = sheetState,
             coroutineScope = scope,
             onNegativeButtonOrCloseClick = {
@@ -371,7 +372,7 @@ fun GroupScreenSuccess(
             deleteAudioGroup = deleteAudioGroup,
             addAudioGroup = addAudioGroup,
             callFetch = callFetch,
-
+            applicationContext = LocalContext.current
         )
     }
 

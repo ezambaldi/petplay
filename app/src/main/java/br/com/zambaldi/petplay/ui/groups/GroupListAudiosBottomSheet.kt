@@ -55,6 +55,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -68,6 +69,7 @@ import br.com.zambaldi.petplay.ui.ScreenLoading
 import br.com.zambaldi.petplay.ui.TopMessage
 import br.com.zambaldi.petplay.ui.audios.AudioScreenSuccess
 import br.com.zambaldi.petplay.ui.audios.AudioState
+import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
 import br.com.zambaldi.petplay.utils.SnackBarContainer
 import br.com.zambaldi.petplay.utils.TopMessageState
 import com.example.myapplicationtest.utils.bodyLarge
@@ -76,12 +78,14 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.File
 
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupListAudiosBottomSheet(
     groupId: Int,
+    groupName: String,
     sheetState: SheetState,
     coroutineScope: CoroutineScope,
     onNegativeButtonOrCloseClick: () -> Unit,
@@ -90,6 +94,7 @@ fun GroupListAudiosBottomSheet(
     deleteAudioGroup: (id: Int) -> Unit,
     addAudioGroup: (AudiosGroup) -> Unit,
     callFetch: () -> Unit,
+    applicationContext: android.content.Context,
 ) {
     val onClose: () -> Unit = {
         coroutineScope.launch {
@@ -100,6 +105,11 @@ fun GroupListAudiosBottomSheet(
             }
         }
     }
+
+    val player by lazy {
+        AndroidAudioPlayer(applicationContext)
+    }
+
 
     ModalBottomSheet(
         containerColor = Color.White,
@@ -132,13 +142,14 @@ fun GroupListAudiosBottomSheet(
 
             Spacer(Modifier.height(4.dp))
             Text(
-                text = "Select the audios to associate with the group",
+                textAlign = TextAlign.Center,
+                text = "Select the audios to associate with the group\n$groupName",
                 style = bodyLarge,
                 color = colorResource(id = R.color.md_theme_dark_onTertiary),
                 modifier = Modifier
                     .padding(start = 4.dp)
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
 
 
             Column(
@@ -165,13 +176,17 @@ fun GroupListAudiosBottomSheet(
                                     .padding(8.dp)
                             ) {
 
+                                val imagePlay = if(audio.path.isNotEmpty()) R.drawable.ic_play else R.drawable.ic_play_gray
+
                                 Image(
-                                    painter = painterResource(id = R.drawable.ic_play),
+                                    painter = painterResource(id = imagePlay),
                                     contentDescription = stringResource(id = R.string.touch_for_play),
                                     modifier = Modifier
                                         .clickable {
-                                            //TODO: play audio
-                                        }
+                                            if(audio.path.isNotEmpty()) {
+                                                val file = File(audio.path)
+                                                player.playFile(file)
+                                            }                                        }
                                 )
                                 Text(
                                     text = audio.name,
