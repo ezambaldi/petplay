@@ -35,14 +35,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,7 +51,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplay.R
-import br.com.zambaldi.petplay.models.Audio
 import br.com.zambaldi.petplay.models.AudiosGroup
 import br.com.zambaldi.petplay.models.Group
 import br.com.zambaldi.petplay.ui.AlertDialogWithBtn
@@ -226,8 +221,6 @@ fun GroupListScreen(
                         vertical = 1.dp,
                     )
             ) {
-
-                val context = LocalContext.current
                 Box(
                     modifier = modifier
                         .fillMaxSize()

@@ -13,10 +13,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import br.com.zambaldi.petplay.R
-import br.com.zambaldi.petplay.models.Audio
 import br.com.zambaldi.petplay.models.AudiosGroup
 import br.com.zambaldi.petplay.models.Group
-import br.com.zambaldi.petplay.ui.audios.AudiosViewModel
 import br.com.zambaldi.petplay.utils.TopMessageState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map

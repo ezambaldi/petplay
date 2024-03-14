@@ -167,11 +167,6 @@ class GroupsViewModel(
                 )
             ) {
                 is GenericResult.Success -> {
-//                    setState { copy(topMessageState = TopMessageState.Show(
-//                        message = "Audio associated successfully!",
-//                        typeMessage = TypeMessage.SUCCESS,
-//                        setAsDefault = { setTopMessageStateDefault() }
-//                    )) }
                     fetchGroupList()
                 }
                 is GenericResult.Error -> {

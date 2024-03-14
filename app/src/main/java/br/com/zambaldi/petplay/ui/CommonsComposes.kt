@@ -1,5 +1,6 @@
 package br.com.zambaldi.petplay.ui
 
+import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -45,6 +46,7 @@ import com.example.myapplicationtest.utils.bodyLarge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
+import java.lang.Thread.sleep
 
 @Composable
 fun ScreenEmpty(
@@ -119,6 +121,7 @@ fun ScreenLoading(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .fillMaxSize()
             .padding(bottom = 16.dp)
     ) {
         Column(
@@ -151,7 +154,6 @@ fun ScreenLoading(
             )
         }
     }
-
 }
 
 @Composable

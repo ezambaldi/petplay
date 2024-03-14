@@ -1,5 +1,6 @@
 package br.com.zambaldi.petplay.ui.audios
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -66,13 +67,9 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 import java.io.File
-import kotlin.concurrent.timerTask
-import kotlin.math.absoluteValue
-import kotlin.random.Random
 
 @Composable
 fun AudioListScreen(
-    applicationContext: android.content.Context,
     state: AudioState,
     topMessageState: TopMessageState,
     callFetch: () -> Unit,
@@ -80,10 +77,11 @@ fun AudioListScreen(
     addAudio: (Audio) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val applicationContext = LocalContext.current
     val scope = rememberCoroutineScope()
     val errorSnackBarHostState = remember { SnackbarHostState() }
     val colorIconRecord = remember {
-        mutableStateOf(android.R.color.holo_green_light)
+        mutableIntStateOf(android.R.color.holo_green_light)
     }
     val recorder by lazy {
         AndroidAudioRecorder(applicationContext)
@@ -119,9 +117,6 @@ fun AudioListScreen(
         }
     }
 
-
-
-
     Scaffold(
         topBar = {
             if(topMessageState is TopMessageState.Show) {
@@ -136,7 +131,7 @@ fun AudioListScreen(
             SnackBarContainer(snackBarHostState = errorSnackBarHostState)
         },
         floatingActionButton = {
-            var onDismiss = remember { mutableStateOf(false) }
+            val onDismiss = remember { mutableStateOf(false) }
             val txtFieldError = remember { mutableStateOf("") }
             val txtField = remember { mutableStateOf("") }
             if(onDismiss.value) {
@@ -276,8 +271,10 @@ fun AudioListScreen(
                                             )
                                             onDismiss.value = false
                                             txtField.value = ""
+                                            audioFile.value = null
+                                            txtFieldError.value = ""
                                         },
-                                        enabled = audioFile.value != null,
+                                        enabled = audioFile.value != null && !stopEnabled.value,
                                         shape = RoundedCornerShape(50.dp),
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -320,8 +317,6 @@ fun AudioListScreen(
                         vertical = 1.dp,
                     )
             ) {
-
-                val context = LocalContext.current
                 Box(
                     modifier = modifier
                         .fillMaxSize()
@@ -351,10 +346,9 @@ fun AudioListScreen(
             }
         }
     )
-
-
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun AudioScreenSuccess(
     applicationContext: android.content.Context,
@@ -407,7 +401,7 @@ fun AudioScreenSuccess(
                             contentDescription = stringResource(id = R.string.touch_for_remove),
                             modifier = modifier
                                 .clickable {
-                                    audioToDelete.value = audio.id
+                                    audioToDelete.intValue = audio.id
                                     audioName.value = audio.name
                                     openDialog.value = true
                                 }
