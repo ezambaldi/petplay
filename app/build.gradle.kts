@@ -54,11 +54,11 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.compose.material3:material3-android:1.2.0")
+    implementation("androidx.compose.material3:material3-android:1.2.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -108,8 +108,8 @@ dependencies {
 
     val nav_version = "2.7.7"
     // Java language implementation
-    implementation("androidx.navigation:navigation-fragment:$nav_version")
-    implementation("androidx.navigation:navigation-ui:$nav_version")
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     // Kotlin
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
