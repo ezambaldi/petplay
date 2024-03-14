@@ -12,9 +12,14 @@ class AndroidAudioPlayer(
     private var player: MediaPlayer? = null
 
     override fun playFile(file: File) {
-        MediaPlayer.create(context, file.toUri()).apply {
-            player = this
-            start()
+
+        try {
+            MediaPlayer.create(context, file.toUri()).apply {
+                player = this
+                start()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

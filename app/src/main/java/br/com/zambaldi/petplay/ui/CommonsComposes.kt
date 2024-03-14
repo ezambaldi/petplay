@@ -2,6 +2,8 @@ package br.com.zambaldi.petplay.ui
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +46,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.example.myapplicationtest.utils.bodyLarge
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Thread.sleep

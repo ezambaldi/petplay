@@ -259,6 +259,7 @@ fun AudioListScreen(
                                 Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                                     Button(
                                         onClick = {
+                                            Log.i("AudioListScreen", "audioFile.value?.path: ${audioFile.value?.path}")
                                             if (txtField.value.isEmpty()) {
                                                 txtFieldError.value = msgError
                                                 return@Button
