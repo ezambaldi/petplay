@@ -2,6 +2,7 @@ package br.com.zambaldi.petplay.ui
 
 import android.os.Build
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +30,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import br.com.zambaldi.petplay.R
+import br.com.zambaldi.petplay.models.Audio
+import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
 import br.com.zambaldi.petplay.utils.SnackBarVisualsCustom
 import br.com.zambaldi.petplay.utils.TypeMessage
 import br.com.zambaldi.petplay.utils.showCustomSnackBar
@@ -39,6 +44,7 @@ import coil.size.Size
 import com.example.myapplicationtest.utils.bodyLarge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.File
 
 @Composable
 fun ScreenEmpty(
@@ -168,4 +174,60 @@ fun TopMessage(
             )
         }
     }
+}
+
+@Composable
+fun ImagePlay(
+    audio: Audio,
+    player: AndroidAudioPlayer,
+) {
+    val scope = rememberCoroutineScope()
+    val startPlay = remember { mutableStateOf(false) }
+    val stopPlay = remember { mutableStateOf(false) }
+    val isPlaying = remember { mutableStateOf(false) }
+    val audioPath = remember { mutableStateOf("") }
+
+    var imagePlay = if(audio.path.isNotEmpty() && !isPlaying.value) R.drawable.ic_play else R.drawable.ic_play_gray
+    if(isPlaying.value && audioPath.value == audio.path) imagePlay = R.drawable.ic_stop
+
+    if(startPlay.value) {
+        startPlay.value = false
+        isPlaying.value = true
+        LaunchedEffect(Unit) {
+            scope.launch {
+                if(audio.path.isNotEmpty()) {
+                    val file = File(audioPath.value)
+                    player.playFile(file)
+                }
+            }
+        }
+    }
+
+
+    if(stopPlay.value) {
+        stopPlay.value = false
+        isPlaying.value = false
+        if(audioPath.value == audio.path) imagePlay = R.drawable.ic_play
+        LaunchedEffect(Unit) {
+            scope.launch {
+                player.stop()
+            }
+        }
+    }
+
+    Image(
+        painter = painterResource(imagePlay),
+        contentDescription = stringResource(id = R.string.touch_for_play),
+        modifier = Modifier
+            .clickable {
+                audioPath.value = audio.path
+                if(isPlaying.value) {
+                    stopPlay.value = true
+                } else {
+                    startPlay.value = true
+                }
+            }
+    )
+
+
 }

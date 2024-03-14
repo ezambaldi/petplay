@@ -41,6 +41,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplay.R
 import br.com.zambaldi.petplay.models.Audio
 import br.com.zambaldi.petplay.models.AudiosGroup
+import br.com.zambaldi.petplay.ui.ImagePlay
 import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
 import com.example.myapplicationtest.utils.bodyLarge
 import kotlinx.coroutines.CoroutineScope
@@ -63,10 +64,6 @@ fun GroupListAudiosBottomSheet(
     callFetch: () -> Unit,
     applicationContext: android.content.Context,
 ) {
-    val scope = rememberCoroutineScope()
-    val startPlay = remember { mutableStateOf(false) }
-    val stopPlay = remember { mutableStateOf(false) }
-
 
     val onClose: () -> Unit = {
         coroutineScope.launch {
@@ -148,41 +145,11 @@ fun GroupListAudiosBottomSheet(
                                     .padding(8.dp)
                             ) {
 
-                                var imagePlay = if(audio.path.isNotEmpty()) R.drawable.ic_play else R.drawable.ic_play_gray
-
-                                if(startPlay.value) {
-                                    imagePlay = R.drawable.ic_stop
-                                    LaunchedEffect(Unit) {
-                                        scope.launch {
-                                            if(audio.path.isNotEmpty()) {
-                                                val file = File(audio.path)
-                                                player.playFile(file)
-                                            }
-                                        }
-                                    }
-                                }
-
-
-                                if(stopPlay.value) {
-                                    imagePlay = R.drawable.ic_play
-                                    stopPlay.value = false
-                                    LaunchedEffect(Unit) {
-                                        scope.launch {
-                                            player.stop()
-                                        }
-                                    }
-                                }
-
-                                Image(
-                                    painter = painterResource(id = imagePlay),
-                                    contentDescription = stringResource(id = R.string.touch_for_play),
-                                    modifier = Modifier
-                                        .clickable {
-                                            if(startPlay.value) {
-                                                startPlay.value = false
-                                                stopPlay.value = true
-                                            } else startPlay.value = true                                        }
+                                ImagePlay(
+                                    audio = audio,
+                                    player = player,
                                 )
+
                                 Text(
                                     text = audio.name,
                                     style = bodyLarge,

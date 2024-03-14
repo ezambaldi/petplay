@@ -52,6 +52,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplay.R
 import br.com.zambaldi.petplay.models.Audio
 import br.com.zambaldi.petplay.ui.AlertDialogWithBtn
+import br.com.zambaldi.petplay.ui.ImagePlay
 import br.com.zambaldi.petplay.ui.ScreenEmpty
 import br.com.zambaldi.petplay.ui.ScreenLoading
 import br.com.zambaldi.petplay.ui.TopMessage
@@ -95,14 +96,12 @@ fun AudioListScreen(
     val startRecord = remember { mutableStateOf(false) }
     val stopRecord = remember { mutableStateOf(false) }
 
-    val generatByRandom = Random(System.currentTimeMillis())
-    val randomNumber= generatByRandom.nextInt(0, 10)
-
     if(startRecord.value) {
         startRecord.value = false
         LaunchedEffect(Unit) {
             scope.launch {
-                File(applicationContext.cacheDir,"audio${randomNumber}.mp3").also {
+                val randomNumber = System.currentTimeMillis().toString()
+                File(applicationContext.cacheDir,"audio_${randomNumber}.mp3").also {
                     recorder.start(it)
                     audioFile.value = it
                 }
@@ -363,18 +362,12 @@ fun AudioScreenSuccess(
     deleteAudio: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
     val openDialog = remember { mutableStateOf(false) }
-    val startPlay = remember { mutableStateOf(false) }
-    val stopPlay = remember { mutableStateOf(false) }
     val audioToDelete = remember { mutableIntStateOf(0) }
     val audioName = remember { mutableStateOf("") }
     val player by lazy {
         AndroidAudioPlayer(applicationContext)
     }
-
-
-
 
     val audios: List<Audio> = state.data
     Column(
@@ -395,42 +388,11 @@ fun AudioScreenSuccess(
                             .padding(8.dp)
                     ) {
 
-                        var imagePlay = if(audio.path.isNotEmpty()) R.drawable.ic_play else R.drawable.ic_play_gray
+                        ImagePlay(
+                            audio = audio,
+                            player = player,
+                            )
 
-                        if(startPlay.value) {
-                            imagePlay = R.drawable.ic_stop
-                            LaunchedEffect(Unit) {
-                                scope.launch {
-                                    if(audio.path.isNotEmpty()) {
-                                        val file = File(audio.path)
-                                        player.playFile(file)
-                                    }
-                                }
-                            }
-                        }
-
-
-                        if(stopPlay.value) {
-                            imagePlay = R.drawable.ic_play
-                            stopPlay.value = false
-                            LaunchedEffect(Unit) {
-                                scope.launch {
-                                    player.stop()
-                                }
-                            }
-                        }
-
-                        Image(
-                            painter = painterResource(imagePlay),
-                            contentDescription = stringResource(id = R.string.touch_for_play),
-                            modifier = modifier
-                                .clickable {
-                                    if(startPlay.value) {
-                                        startPlay.value = false
-                                        stopPlay.value = true
-                                    } else startPlay.value = true
-                                }
-                        )
                         Text(
                             text = audio.name,
                             style = bodyLarge,
