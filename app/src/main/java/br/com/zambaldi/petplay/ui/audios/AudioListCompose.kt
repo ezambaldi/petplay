@@ -36,6 +36,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -83,6 +84,7 @@ fun AudioListScreen(
     val applicationContext = LocalContext.current
     val scope = rememberCoroutineScope()
     val errorSnackBarHostState = remember { SnackbarHostState() }
+    val showExternalAudios = remember { mutableStateOf(false) }
     val colorIconRecord = remember {
         mutableIntStateOf(android.R.color.holo_green_light)
     }
@@ -98,6 +100,7 @@ fun AudioListScreen(
     val stopEnabled = remember { mutableStateOf(false) }
     val startRecord = remember { mutableStateOf(false) }
     val stopRecord = remember { mutableStateOf(false) }
+    val path = remember { mutableStateOf("") }
 
     if(startRecord.value) {
         startRecord.value = false
@@ -112,12 +115,19 @@ fun AudioListScreen(
         }
     }
 
+    if(showExternalAudios.value) {
+        AudioListFromMediaScreen(
+            addAudio = { path.value = it },
+            onClose = { showExternalAudios.value = false })
+    }
+
     if(stopRecord.value) {
         stopRecord.value = false
         LaunchedEffect(Unit) {
             scope.launch {
                 recorder.stop()
                 stopEnabled.value = false
+                path.value = audioFile.value?.path?: ""
             }
         }
     }
@@ -257,6 +267,31 @@ fun AudioListScreen(
                                         }
                                 }
 
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(50.dp, 0.dp, 50.dp, 0.dp))
+                                {
+                                    Button(
+                                        onClick = {
+                                            showExternalAudios.value = true
+                                        },
+                                        enabled = true,
+                                        shape = RoundedCornerShape(50.dp),
+                                        modifier = Modifier
+                                            .padding(horizontal = 4.dp)
+                                            .height(60.dp)
+                                    ) {
+                                        Text(
+                                            textAlign = TextAlign.Center,
+                                            text = stringResource(id = R.string.btn_select_external_audio)
+                                        )
+                                    }
+
+                                }
 
                                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -272,15 +307,16 @@ fun AudioListScreen(
                                             addAudio(
                                                 Audio(
                                                     name = txtField.value,
-                                                    path = audioFile.value?.path?: "",
+                                                    path = path.value,
                                                 )
                                             )
                                             onDismiss.value = false
                                             txtField.value = ""
                                             audioFile.value = null
                                             txtFieldError.value = ""
+                                            path.value = ""
                                         },
-                                        enabled = audioFile.value != null && !stopEnabled.value,
+                                        enabled = path.value.isNotEmpty() && !stopEnabled.value,
                                         shape = RoundedCornerShape(50.dp),
                                         modifier = Modifier
                                             .fillMaxWidth()

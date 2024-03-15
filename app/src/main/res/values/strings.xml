@@ -20,6 +20,7 @@
     <string name="btn_confirm">Confirm</string>
     <string name="btn_start_recording">Start\nRecording</string>
     <string name="btn_stop_recording">Stop\nRecording</string>
+    <string name="btn_select_external_audio">Select audio</string>
     <string name="btn_cancel">Cancel</string>
     <string name="title_add_audio">Add new audio</string>
     <string name="enter_name">Enter name</string>
