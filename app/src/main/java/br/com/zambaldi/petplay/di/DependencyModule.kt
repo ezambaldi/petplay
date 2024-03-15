@@ -16,6 +16,7 @@ import br.com.zambaldi.petplay.providers.mappers.AudioMapper
 import br.com.zambaldi.petplay.providers.mappers.GroupMapper
 import br.com.zambaldi.petplay.ui.audios.AudiosViewModel
 import br.com.zambaldi.petplay.ui.groups.GroupsViewModel
+import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
 import br.com.zambaldi.petplay.usecases.AudioGroupUseCase
 import br.com.zambaldi.petplay.usecases.AudioGroupUseCaseImpl
 import br.com.zambaldi.petplay.usecases.AudioUseCase
@@ -54,6 +55,11 @@ object DependencyModule {
     }
 
     private val providerModule = module {
+
+        single<AndroidAudioPlayer> {
+            AndroidAudioPlayer(get())
+        }
+
         single<PetPlayLocalProviderApi> {
             PetPlayLocalProviderImpl(get(), get(), get())
         }

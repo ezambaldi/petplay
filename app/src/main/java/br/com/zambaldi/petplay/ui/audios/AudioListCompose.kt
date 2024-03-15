@@ -1,7 +1,9 @@
 package br.com.zambaldi.petplay.ui.audios
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -68,6 +70,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 import java.io.File
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun AudioListScreen(
     state: AudioState,
@@ -83,9 +86,11 @@ fun AudioListScreen(
     val colorIconRecord = remember {
         mutableIntStateOf(android.R.color.holo_green_light)
     }
-    val recorder by lazy {
+
+    val recorder = remember {
         AndroidAudioRecorder(applicationContext)
     }
+
     var audioF: File? = null
     val audioFile = remember {
         mutableStateOf(audioF)

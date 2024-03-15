@@ -215,7 +215,8 @@ fun ImagePlay(
         if(audioPath.value == audio.path) imagePlay = R.drawable.ic_play
         LaunchedEffect(Unit) {
             scope.launch {
-                player.stop()
+                val file = File(audioPath.value)
+                player.stop(file)
             }
         }
     }

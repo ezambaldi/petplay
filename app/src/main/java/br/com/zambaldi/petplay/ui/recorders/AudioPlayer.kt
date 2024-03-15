@@ -4,5 +4,5 @@ import java.io.File
 
 interface AudioPlayer {
     fun playFile(file: File)
-    fun stop()
+    fun stop(file: File)
 }

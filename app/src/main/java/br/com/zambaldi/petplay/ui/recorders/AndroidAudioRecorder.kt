@@ -3,6 +3,7 @@ package br.com.zambaldi.petplay.ui.recorders
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
+import androidx.annotation.RequiresApi
 import java.io.File
 import java.io.FileOutputStream
 
@@ -20,7 +21,7 @@ class AndroidAudioRecorder(
         }
     }
 
-
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun start(outputFile: File) {
         createRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -37,6 +38,7 @@ class AndroidAudioRecorder(
 
     override fun stop() {
         recorder?.apply {
+//            prepare()
             stop()
             reset()
         }
