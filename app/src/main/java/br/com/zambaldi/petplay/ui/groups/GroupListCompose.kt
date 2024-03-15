@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,7 +36,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +52,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -54,6 +60,8 @@ import br.com.zambaldi.petplay.R
 import br.com.zambaldi.petplay.models.AudiosGroup
 import br.com.zambaldi.petplay.models.Group
 import br.com.zambaldi.petplay.ui.AlertDialogWithBtn
+import br.com.zambaldi.petplay.ui.CustomCalendarView
+import br.com.zambaldi.petplay.ui.CustomTimeView
 import br.com.zambaldi.petplay.ui.ScreenEmpty
 import br.com.zambaldi.petplay.ui.ScreenLoading
 import br.com.zambaldi.petplay.ui.TopMessage
@@ -63,7 +71,10 @@ import com.example.myapplicationtest.utils.bodyLarge
 import com.example.myapplicationtest.utils.bodyLargeBold
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupListScreen(
     state: GroupState,
@@ -98,10 +109,63 @@ fun GroupListScreen(
                 SnackBarContainer(snackBarHostState = errorSnackBarHostState)
             },
             floatingActionButton = {
+                val localDate = LocalDate.now()
+                val localTime = rememberTimePickerState(11,30, false)
+//                val localTime = localDate.format(DateTimeFormatter.ofPattern("HH:MM"))
                 var onDismiss = remember { mutableStateOf(false) }
+                var showDatePickerStart = remember { mutableStateOf(false) }
+                var showDatePickerFinish = remember { mutableStateOf(false) }
+                var showTimePickerStart = remember { mutableStateOf(false) }
+                var showTimePickerFinish = remember { mutableStateOf(false) }
                 val txtFieldError = remember { mutableStateOf("") }
-                val txtField = remember { mutableStateOf("") }
+                val groupDateStart = remember { mutableStateOf(localDate) }
+                val groupDateFinish = remember { mutableStateOf(localDate) }
+                val groupTimeStart = remember { mutableStateOf(localTime) }
+                val groupTimeFinish = remember { mutableStateOf(localTime) }
+                val groupInterval = remember { mutableIntStateOf(0) }
+                val groupInteractionType = remember { mutableStateOf("") }
+
                 if(onDismiss.value) {
+
+                    if(showDatePickerStart.value) {
+                        CustomCalendarView(
+                            onDateSelected = {
+                                groupDateStart.value = it
+                                showDatePickerStart.value = false
+                            }
+                        )
+                    }
+
+                    if(showDatePickerFinish.value) {
+                        CustomCalendarView(
+                            onDateSelected = {
+                                groupDateFinish.value = it
+                                showDatePickerFinish.value = false
+                            }
+                        )
+                    }
+
+                    if(showTimePickerStart.value) {
+                        CustomTimeView(
+                            timePickerState = groupTimeStart.value,
+                            onClose = {
+                                showTimePickerStart.value = false
+                            }
+                        )
+                    }
+
+                    if(showTimePickerFinish.value) {
+                        CustomCalendarView(
+                            onDateSelected = {
+                                groupTimeFinish.value = localTime
+                                showTimePickerFinish.value = false
+                            }
+                        )
+                    }
+
+
+
+
                     Dialog(onDismissRequest = { } ) {
                         Surface(
                             shape = RoundedCornerShape(16.dp),
@@ -161,29 +225,77 @@ fun GroupListScreen(
                                             )
                                         },
                                         placeholder = { Text(text = stringResource(id = R.string.enter_name)) },
-                                        value = txtField.value,
+                                        value = groupName.value,
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                                         onValueChange = {
-                                            txtField.value = it.take(40)
+                                            groupName.value = it.take(40)
                                         })
 
                                     Spacer(modifier = Modifier.height(20.dp))
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceAround,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                        ) {
+                                            Button(
+                                                onClick = {
+                                                    showDatePickerStart.value = true
+                                                },
+                                                shape = RoundedCornerShape(50.dp),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(60.dp)
+                                            ) {
+                                                Text(
+                                                    textAlign = TextAlign.Center,
+                                                    text = stringResource(id = R.string.enter_date_start) + groupDateStart.value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                            }
+                                        }
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                        ) {
+                                            Button(
+                                                onClick = {
+                                                    showTimePickerStart.value = true
+                                                },
+                                                shape = RoundedCornerShape(50.dp),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(60.dp)
+                                            ) {
+                                                Text(
+                                                    textAlign = TextAlign.Center,
+                                                    text = stringResource(id = R.string.enter_time_start) + groupTimeStart.value.hour.toString() + ":" + groupTimeStart.value.minute.toString())
+                                            }
+                                        }
+
+                                    }
+
+
+                                    Spacer(modifier = Modifier.height(20.dp))
+
 
                                     val msgError = stringResource(id = R.string.msg_empty_field)
                                     Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                                         Button(
                                             onClick = {
-                                                if (txtField.value.isEmpty()) {
+                                                if (groupName.value.isEmpty()) {
                                                     txtFieldError.value = msgError
                                                     return@Button
                                                 }
                                                 addGroup(
                                                     Group(
-                                                        name = txtField.value,
+                                                        name = groupName.value,
                                                     )
                                                 )
                                                 onDismiss.value = false
-                                                txtField.value = ""
+                                                groupName.value = ""
                                             },
                                             shape = RoundedCornerShape(50.dp),
                                             modifier = Modifier
