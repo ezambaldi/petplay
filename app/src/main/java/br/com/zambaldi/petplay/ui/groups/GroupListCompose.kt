@@ -280,7 +280,7 @@ fun GroupListScreen(
                                                                 }
                                                         )
                                                         Text(
-                                                            text = group.name,
+                                                            text = "${group.name} (${group.audios.size})",
                                                             style = bodyLarge,
                                                             color = colorResource(id = R.color.md_theme_dark_onTertiary),
                                                             modifier = modifier
