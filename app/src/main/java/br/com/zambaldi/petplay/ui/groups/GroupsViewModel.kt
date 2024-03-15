@@ -1,7 +1,6 @@
 package br.com.zambaldi.petplay.ui.groups
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import br.com.zambaldi.petplay.models.Audio
@@ -24,8 +23,8 @@ class GroupsViewModel(
 
     private val audioState = MutableLiveData<List<Audio>?>()
 
-    private fun fetchGroupList() {
-        setState { copy(groupState = GroupState.Loading) }
+    private fun fetchGroupList(setLoading: Boolean) {
+        if(setLoading) setState { copy(groupState = GroupState.Loading) }
         val groups: MutableList<Group> = listOf<Group>().toMutableList()
         viewModelScope.launch {
             when (val result = groupUseCase.getGroups()) {
@@ -60,7 +59,6 @@ class GroupsViewModel(
 
     private fun fetchAudioList() {
         viewModelScope.launch {
-            setState { copy(groupState = GroupState.Loading) }
             when (val result = audioUseCase.getAudios()) {
                 is GenericResult.Success -> {
                     audioState.value =  result.data
@@ -100,7 +98,7 @@ class GroupsViewModel(
                         typeMessage = TypeMessage.SUCCESS,
                         setAsDefault = { setTopMessageStateDefault() }
                     )) }
-                    fetchGroupList()
+                    fetchGroupList(true)
                 }
                 is GenericResult.Error -> {
                     setState { copy(topMessageState = TopMessageState.Show(
@@ -108,7 +106,7 @@ class GroupsViewModel(
                         typeMessage = TypeMessage.ERROR,
                         setAsDefault = { setTopMessageStateDefault() }
                     )) }
-                    fetchGroupList()
+                    fetchGroupList(true)
                 }
             }
         }
@@ -118,12 +116,7 @@ class GroupsViewModel(
         viewModelScope.launch {
             when (val result = audioGroupUseCase.deleteAudioGroup(id)) {
                 is GenericResult.Success -> {
-//                    setState { copy(topMessageState = TopMessageState.Show(
-//                        message = "Audio successfully disassociated!",
-//                        typeMessage = TypeMessage.SUCCESS,
-//                        setAsDefault = { setTopMessageStateDefault() }
-//                    )) }
-                    fetchGroupList()
+                    fetchGroupList(false)
                 }
                 is GenericResult.Error -> {
                     setState { copy(topMessageState = TopMessageState.Show(
@@ -131,7 +124,7 @@ class GroupsViewModel(
                         typeMessage = TypeMessage.ERROR,
                         setAsDefault = { setTopMessageStateDefault() }
                     )) }
-                    fetchGroupList()
+                    fetchGroupList(false)
                 }
             }
         }
@@ -146,7 +139,7 @@ class GroupsViewModel(
                         typeMessage = TypeMessage.SUCCESS,
                         setAsDefault = { setTopMessageStateDefault() }
                     )) }
-                    fetchGroupList()
+                    fetchGroupList(true)
                 }
                 is GenericResult.Error -> {
                     setState { copy(topMessageState = TopMessageState.Show(
@@ -154,7 +147,7 @@ class GroupsViewModel(
                         typeMessage = TypeMessage.ERROR,
                         setAsDefault = { setTopMessageStateDefault() }
                     )) }
-                    fetchGroupList()
+                    fetchGroupList(true)
                 }
             }
         }
@@ -167,7 +160,7 @@ class GroupsViewModel(
                 )
             ) {
                 is GenericResult.Success -> {
-                    fetchGroupList()
+                    fetchGroupList(false)
                 }
                 is GenericResult.Error -> {
                     setState { copy(topMessageState = TopMessageState.Show(
@@ -175,7 +168,7 @@ class GroupsViewModel(
                         typeMessage = TypeMessage.ERROR,
                         setAsDefault = { setTopMessageStateDefault() }
                     )) }
-                    fetchGroupList()
+                    fetchGroupList(false)
                 }
             }
         }
@@ -205,7 +198,7 @@ class GroupsViewModel(
 
     override fun intent(intent: ViewIntent) {
         when (intent) {
-            is ViewIntent.FetchGroupList -> { fetchGroupList() }
+            is ViewIntent.FetchGroupList -> { fetchGroupList(false) }
             is ViewIntent.FetchAudioList -> { fetchAudioList() }
             is ViewIntent.AddGroup -> { addGroup(intent.group) }
             is ViewIntent.DeleteGroup -> { deleteGroup(intent.id) }

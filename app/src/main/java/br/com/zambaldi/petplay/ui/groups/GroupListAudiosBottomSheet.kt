@@ -51,6 +51,7 @@ import br.com.zambaldi.petplay.models.AudiosGroup
 import br.com.zambaldi.petplay.ui.ImagePlay
 import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
 import com.example.myapplicationtest.utils.bodyLarge
+import com.example.myapplicationtest.utils.bodyLargeBold
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -61,7 +62,6 @@ import java.io.File
 fun GroupListAudiosBottomSheet(
     groupId: Int,
     groupName: String,
-    coroutineScope: CoroutineScope,
     onNegativeButtonOrCloseClick: () -> Unit,
     audios: MutableList<Audio>,
     audioGroup: MutableList<AudiosGroup>,
@@ -70,16 +70,6 @@ fun GroupListAudiosBottomSheet(
     callFetch: () -> Unit,
     applicationContext: android.content.Context,
 ) {
-
-//    val onClose: () -> Unit = {
-//        coroutineScope.launch {
-//            sheetState.hide()
-//        }.invokeOnCompletion {
-//            if (!sheetState.isVisible) {
-//                onNegativeButtonOrCloseClick()
-//            }
-//        }
-//    }
 
     val player by lazy {
         AndroidAudioPlayer(applicationContext)
@@ -124,17 +114,33 @@ fun GroupListAudiosBottomSheet(
                         )
                     }
 
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        textAlign = TextAlign.Center,
-                        text = "Select the audios to associate with the group\n$groupName",
-                        style = bodyLarge,
-                        color = colorResource(id = R.color.md_theme_dark_onTertiary),
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .padding(start = 4.dp)
-                    )
-                    Spacer(Modifier.height(12.dp))
-
+                            .fillMaxWidth()
+                    ) {
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            textAlign = TextAlign.Center,
+                            text = "Select the audios to associate\nwith the group",
+                            style = bodyLarge,
+                            color = colorResource(id = R.color.md_theme_dark_onTertiary),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 4.dp)
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            textAlign = TextAlign.Center,
+                            text = groupName,
+                            style = bodyLargeBold,
+                            color = colorResource(id = R.color.md_theme_dark_onTertiary),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 4.dp)
+                        )
+                        Spacer(Modifier.height(12.dp))
+                    }
 
                     Column(
                         horizontalAlignment = Alignment.Start,
