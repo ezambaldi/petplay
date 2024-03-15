@@ -227,27 +227,133 @@ fun GroupListScreen(
                         .background(Color.White)
                         .padding(8.dp)
                 ) {
-                    when (state) {
-                        is GroupState.Loading -> {
-                            ScreenLoading()
-                        }
-                        is GroupState.Loaded -> {
-                            if(state.data.isNotEmpty()) {
-                                GroupScreenSuccess(
-                                    state = state,
-                                    deleteGroup = deleteGroup,
-                                    deleteAudioGroup = deleteAudioGroup,
-                                    addAudioGroup = addAudioGroup,
-                                    callFetch = callFetch,
-                                )
-                            } else {
-                                ScreenEmpty(
-                                    modifier = modifier
-                                )
+                    val selectedGroup = remember { mutableStateOf(Group()) }
+                    val openDialog = remember { mutableStateOf(false) }
+                    val groupToDelete = remember { mutableIntStateOf(0) }
+                    val groupName = remember { mutableStateOf("") }
+                    val showBottomSheet = remember { mutableStateOf(false) }
+
+                        when (state) {
+                            is GroupState.Loading -> {
+                                if(!showBottomSheet.value) {
+                                    ScreenLoading()
+                                }
                             }
+                            is GroupState.Loaded -> {
+                                if(state.data.isNotEmpty()) {
+                                    val audios = state.audios
+                                    var setAudioGroup = listOf<AudiosGroup>()
+
+                                    if(selectedGroup.value.id > 0) {
+                                        setAudioGroup = state.data.filter {
+                                            it.id == selectedGroup.value.id
+                                        }.first().audios
+                                    }
+
+                                    val audioGroup = setAudioGroup.toMutableList()
+
+                                    val groups: List<Group> = state.data
+
+                                    if(!showBottomSheet.value) {
+                                        Column(
+                                            horizontalAlignment = Alignment.Start,
+                                            modifier = modifier
+                                                .fillMaxSize()
+                                        ) {
+                                            ConstraintLayout(
+                                                modifier = modifier
+                                                    .verticalScroll(rememberScrollState())
+                                            ) {
+                                                Column {
+                                                    groups.forEach { group ->
+                                                        Row(
+                                                            verticalAlignment = Alignment.CenterVertically,
+                                                            modifier = modifier
+                                                                .fillMaxWidth()
+                                                                .padding(8.dp)
+                                                        ) {
+
+                                                            Image(
+                                                                painter = painterResource(id = R.drawable.ic_add),
+                                                                contentDescription = stringResource(id = R.string.touch_for_include_audios),
+                                                                modifier = modifier
+                                                                    .clickable {
+                                                                        selectedGroup.value = group
+                                                                        showBottomSheet.value = true
+
+                                                                    }
+                                                            )
+                                                            Text(
+                                                                text = group.name,
+                                                                style = bodyLarge,
+                                                                color = colorResource(id = R.color.md_theme_dark_onTertiary),
+                                                                modifier = modifier
+                                                                    .padding(start = 4.dp)
+                                                            )
+                                                            Spacer(Modifier.weight(1f))
+
+                                                            Image(
+                                                                painter = painterResource(id = R.drawable.ic_remove),
+                                                                contentDescription = stringResource(id = R.string.touch_for_remove),
+                                                                modifier = modifier
+                                                                    .clickable {
+                                                                        groupToDelete.value = group.id
+                                                                        groupName.value = group.name
+                                                                        openDialog.value = true
+                                                                    }
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            if (openDialog.value) {
+                                                AlertDialogWithBtn(
+                                                    onConfirmation = {
+                                                        deleteGroup(groupToDelete.intValue)
+                                                    },
+                                                    dialogTitle = groupName.value,
+                                                    dialogText = stringResource(id = R.string.msg_remove_item),
+                                                    openDialog = openDialog,
+                                                )
+                                            }
+                                        }
+
+                                    }
+
+                                    if (showBottomSheet.value) {
+                                        GroupListAudiosBottomSheet(
+                                            groupId = selectedGroup.value.id,
+                                            groupName = selectedGroup.value.name,
+                                            coroutineScope = scope,
+                                            onNegativeButtonOrCloseClick = {
+                                                showBottomSheet.value = false
+                                            },
+                                            audios = audios.toMutableList(),
+                                            audioGroup = audioGroup.toMutableList(),
+                                            deleteAudioGroup = deleteAudioGroup,
+                                            addAudioGroup = addAudioGroup,
+                                            callFetch = callFetch,
+                                            applicationContext = LocalContext.current
+                                        )
+                                    }
+
+//                                GroupScreenSuccess(
+//                                    state = state,
+//                                    deleteGroup = deleteGroup,
+//                                    deleteAudioGroup = deleteAudioGroup,
+//                                    addAudioGroup = addAudioGroup,
+//                                    callFetch = callFetch,
+//                                )
+                                } else {
+                                    ScreenEmpty(
+                                        modifier = modifier
+                                    )
+                                }
+                            }
+                            else -> {}
                         }
-                        else -> {}
-                    }
+
+
                 }
             }
         }
@@ -355,7 +461,6 @@ fun GroupScreenSuccess(
         GroupListAudiosBottomSheet(
             groupId = selectedGroup.value.id,
             groupName = selectedGroup.value.name,
-            sheetState = sheetState,
             coroutineScope = scope,
             onNegativeButtonOrCloseClick = {
                 showBottomSheet.value = false
