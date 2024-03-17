@@ -16,6 +16,7 @@ import br.com.zambaldi.petplay.providers.mappers.AudioMapper
 import br.com.zambaldi.petplay.providers.mappers.GroupMapper
 import br.com.zambaldi.petplay.ui.audios.AudiosViewModel
 import br.com.zambaldi.petplay.ui.groups.GroupsViewModel
+import br.com.zambaldi.petplay.ui.play.PlayViewModel
 import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
 import br.com.zambaldi.petplay.usecases.AudioGroupUseCase
 import br.com.zambaldi.petplay.usecases.AudioGroupUseCaseImpl
@@ -77,6 +78,7 @@ object DependencyModule {
     private val viewModelModule = module {
         viewModel { AudiosViewModel(get()) }
         viewModel { GroupsViewModel(get(), get(), get()) }
+        viewModel { PlayViewModel(get(), get()) }
     }
 
     val appModules = dbModule + useCaseModule + providerModule + viewModelModule
