@@ -1,11 +1,15 @@
 package br.com.zambaldi.petplay.models
 
+import java.time.LocalDateTime
+
 data class Group(
     val id: Int = 0,
-    val name: String = "",
+    var name: String = "",
     var audios: List<AudiosGroup> = listOf(),
-    val dateTimeStart: String = "",
-    val dateTimeFinish: String = "",
-    val intervalSecond: Int = 1,
-    val interactionType: InteractionType = InteractionType.SEQUENCE
+    var dateStart: String = "",
+    var dateFinish: String = "",
+    var timeStart: String = "",
+    var timeFinish: String = "",
+    var intervalSecond: Int = 3,
+    var interactionType: InteractionType = InteractionType.SHAKE
 )

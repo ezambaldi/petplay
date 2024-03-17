@@ -51,6 +51,15 @@ class PetPlayLocalProviderImpl(
         }
     }
 
+    override suspend fun updateGroup(groupDomain: GroupDomain): Resource<String> {
+        return try {
+            groupDAO.update(groupDomain.id, groupDomain.name, groupDomain.dateStart, groupDomain.dateFinish, groupDomain.timeStart, groupDomain.timeFinish, groupDomain.intervalSecond, groupDomain.interactionType)
+            Resource.success("")
+        } catch (e: Exception) {
+            Resource.error(e.toString(), "")
+        }
+    }
+
     override suspend fun getGroups(): Resource<List<GroupDomain>> {
         return  try {
             Resource.success(groupDAO.getGroups())

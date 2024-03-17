@@ -14,6 +14,7 @@ interface PetPlayLocalProviderApi {
 
     //GROUP
     suspend fun addGroup(groupDomain: GroupDomain): Resource<String>
+    suspend fun updateGroup(groupDomain: GroupDomain): Resource<String>
     suspend fun getGroups(): Resource<List<GroupDomain>>
     suspend fun deleteGroup(id: Int): Resource<String>
 

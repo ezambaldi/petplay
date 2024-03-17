@@ -21,8 +21,25 @@ class GroupUseCaseImpl(
             GroupDomain(
                 id = group.id,
                 name = group.name,
-                dateTimeStart = group.dateTimeStart,
-                dateTimeFinish = group.dateTimeFinish,
+                dateStart = group.dateStart,
+                dateFinish = group.dateFinish,
+                timeStart = group.timeStart,
+                timeFinish = group.timeFinish,
+                intervalSecond = group.intervalSecond,
+                interactionType = group.interactionType
+            )
+        )
+    }
+
+    override suspend fun updateGroup(group: Group): GenericResult<String> {
+        return localGroupRepository.updateGroup(
+            GroupDomain(
+                id = group.id,
+                name = group.name,
+                dateStart = group.dateStart,
+                dateFinish = group.dateFinish,
+                timeStart = group.timeStart,
+                timeFinish = group.timeFinish,
                 intervalSecond = group.intervalSecond,
                 interactionType = group.interactionType
             )

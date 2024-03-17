@@ -258,10 +258,10 @@ fun ImagePlay(
 @Composable
 fun CustomTimeView(
     timePickerState: TimePickerState,
-    onClose: () -> Unit
+    onClose: (TimePickerState) -> Unit
 ) {
     BasicAlertDialog(
-        onDismissRequest = { onClose() },
+        onDismissRequest = { onClose(timePickerState) },
         modifier = Modifier
             .wrapContentHeight()
             .padding(28.dp)
@@ -295,7 +295,7 @@ fun CustomTimeView(
                         modifier = Modifier
                             .align(Alignment.End)
                             .fillMaxWidth(),
-                        onClick = { onClose() }
+                        onClick = { onClose(timePickerState) }
                     ) {
                         Text(
                             textAlign = TextAlign.Center,

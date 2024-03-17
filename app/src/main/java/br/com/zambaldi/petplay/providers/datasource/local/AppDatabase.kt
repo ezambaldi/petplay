@@ -13,7 +13,7 @@ import br.com.zambaldi.petplay.providers.datasource.local.entity.GroupDomain
     AudioDomain::class,
     GroupDomain::class,
     AudiosGroupDomain::class
-], version = 1, exportSchema = false)
+], version = 1, exportSchema = true)
 
 abstract class AppDatabase : RoomDatabase() {
 

@@ -131,11 +131,38 @@ class GroupsViewModel(
     }
 
     private fun addGroup(group: Group) {
+        if(group.id > 0) {
+            updateGroup(group)
+            return
+        }
         viewModelScope.launch {
             when (val result = groupUseCase.addGroup(group)) {
                 is GenericResult.Success -> {
                     setState { copy(topMessageState = TopMessageState.Show(
                         message = "Group added successfully!",
+                        typeMessage = TypeMessage.SUCCESS,
+                        setAsDefault = { setTopMessageStateDefault() }
+                    )) }
+                    fetchGroupList(true)
+                }
+                is GenericResult.Error -> {
+                    setState { copy(topMessageState = TopMessageState.Show(
+                        message = "Error: ${result.errorMessage}",
+                        typeMessage = TypeMessage.ERROR,
+                        setAsDefault = { setTopMessageStateDefault() }
+                    )) }
+                    fetchGroupList(true)
+                }
+            }
+        }
+    }
+
+    private fun updateGroup(group: Group) {
+        viewModelScope.launch {
+            when (val result = groupUseCase.updateGroup(group)) {
+                is GenericResult.Success -> {
+                    setState { copy(topMessageState = TopMessageState.Show(
+                        message = "Group updated successfully!",
                         typeMessage = TypeMessage.SUCCESS,
                         setAsDefault = { setTopMessageStateDefault() }
                     )) }

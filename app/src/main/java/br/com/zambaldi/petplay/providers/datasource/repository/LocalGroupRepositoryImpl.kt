@@ -29,6 +29,20 @@ class LocalGroupRepositoryImpl(
             }
         }
 
+    override suspend fun updateGroup(groupDomain: GroupDomain): GenericResult<String> =
+        withContext(coroutineContextProvider.io) {
+            val result = petPlayLocalProviderApi.updateGroup(groupDomain)
+            when (result.status) {
+                Status.SUCCESS -> {
+                    GenericResult.Success(result.data?: "")
+                }
+                Status.ERROR -> {
+                    GenericResult.Error(result.message?: GENERIC_ERROR_MESSAGE)
+                }
+                else -> GenericResult.Error(GENERIC_ERROR_MESSAGE)
+            }
+        }
+
     override suspend fun getGroups(): GenericResult<List<GroupDomain>> =
         withContext(coroutineContextProvider.io) {
             val result = petPlayLocalProviderApi.getGroups()

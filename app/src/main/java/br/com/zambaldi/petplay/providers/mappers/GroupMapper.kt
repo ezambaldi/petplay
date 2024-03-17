@@ -11,8 +11,10 @@ object GroupMapper : DataMapper<List<GroupDomain>, List<Group>>() {
                 Group(
                     id = group.id,
                     name = group.name,
-                    dateTimeStart = group.dateTimeStart,
-                    dateTimeFinish = group.dateTimeFinish,
+                    dateStart = group.dateStart,
+                    dateFinish = group.dateFinish,
+                    timeStart = group.timeStart,
+                    timeFinish = group.timeFinish,
                     intervalSecond = group.intervalSecond,
                     interactionType = group.interactionType,
                 )
