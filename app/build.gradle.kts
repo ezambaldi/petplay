@@ -127,5 +127,6 @@ dependencies {
     // swiperefresh
     implementation("com.google.accompanist:accompanist-swiperefresh:0.25.1")
 
+    implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.17")
 
 }
