@@ -3,20 +3,24 @@ package br.com.zambaldi.petplay.ui.recorders
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import androidx.constraintlayout.compose.DesignElements.map
+import android.media.MediaPlayer.OnCompletionListener
 import androidx.core.net.toUri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import java.io.File
+
 
 class AndroidAudioPlayer(
     private val context: Context
 ): AudioPlayer {
 
     private var player: MediaPlayer? = null
+    var playerInfo: Boolean = false
     private var players: ArrayList<Map<String, MediaPlayer>> = ArrayList()
 
     override fun playFile(file: File) {
         try {
-            MediaPlayer().apply {
+            player = MediaPlayer().apply {
                 setAudioAttributes(AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
 
                 reset()
@@ -27,12 +31,22 @@ class AndroidAudioPlayer(
                 }
                 prepare()
                 start()
+                playerInfo = false
                 players.add(mapOf(file.absolutePath to this))
             }
+
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        player?.setOnCompletionListener(OnCompletionListener {
+            playerInfo = true
+        })
+
     }
+
+
 
     override fun stop(file: File) {
         players.forEach { it ->

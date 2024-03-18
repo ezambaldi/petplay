@@ -1,7 +1,10 @@
 package br.com.zambaldi.petplay.ui.play
 
 import android.annotation.SuppressLint
+import android.media.MediaPlayer
 import android.os.Build
+import android.os.SystemClock.sleep
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -16,6 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,10 +33,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import br.com.zambaldi.petplay.R
+import br.com.zambaldi.petplay.models.Audio
+import br.com.zambaldi.petplay.models.AudiosGroup
 import br.com.zambaldi.petplay.models.Group
+import br.com.zambaldi.petplay.providers.CoroutineContextProvider
 import br.com.zambaldi.petplay.ui.groups.GroupState
 import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
 import br.com.zambaldi.petplay.utils.TopMessageState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -50,42 +62,74 @@ fun PlayListScreen(
     val colorPlay = remember { mutableIntStateOf(android.R.color.holo_green_light) }
     val colorStop = remember { mutableIntStateOf(android.R.color.darker_gray) }
     val groupList = remember { mutableStateOf<List<Group>>(emptyList()) }
+    val audioList = remember { mutableStateOf<List<Audio>>(emptyList()) }
+    val startPlayList = remember { mutableStateOf(false) }
 
-//    if(startRecord.value) {
-//        startRecord.value = false
-//        LaunchedEffect(Unit) {
-//            scope.launch {
-//                val randomNumber = System.currentTimeMillis().toString()
-//                File(applicationContext.cacheDir,"audio_${randomNumber}.mp3").also {
-//                    recorder.start(it)
-//                    audioFile.value = it
-//                }
-//            }
-//        }
-//    }
+    if(startPlayList.value) {
+        when (state) {
+            is PlayState.Loaded -> {
+                audioList.value = state.audios
+                groupList.value =  state.data.filter {
+                    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                    val dateStartString = it.dateStart+" "+it.timeStart
+                    val dateFinishString = it.dateFinish + " " + it.timeFinish
+                    val dateStart = LocalDateTime.parse(dateStartString, formatter)
+                    val dateFinish = LocalDateTime.parse(dateFinishString, formatter)
 
+                    LocalDateTime.now() in dateStart..dateFinish
+                }
 
-
-
-
-
-when (state) {
-    is PlayState.Loaded -> {
-        groupList.value =  state.data.filter {
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-            val dateStartString = it.dateStart+" "+it.timeStart
-            val dateFinishString = it.dateFinish + " " + it.timeFinish
-            val dateStart = LocalDateTime.parse(dateStartString, formatter)
-            val dateFinish = LocalDateTime.parse(dateFinishString, formatter)
-
-            LocalDateTime.now() in dateStart..dateFinish
+            }
+            is PlayState.Default -> {}
+            is PlayState.Error -> {}
+            is PlayState.Loading -> {}
         }
 
+        val audioPlayer = AndroidAudioPlayer(applicationContext)
+
+        LaunchedEffect(Unit) {
+            scope.launch(Dispatchers.IO) {
+
+                while (startPlayList.value) {
+                    val audios = ArrayList<AudiosGroup>()
+                    var currentGroupIndex = -1
+                    var currentAudioIndex = -1
+                    var totalGroups = groupList.value.size
+
+                    while (totalGroups > 0) {
+                        if(!startPlayList.value) { break }
+                        totalGroups--
+                        currentGroupIndex++
+                        audios.clear()
+                        currentAudioIndex = -1
+                        audios.addAll(groupList.value[currentGroupIndex].audios)
+                        var totalAudios = audios.size
+                        while (totalAudios > 0) {
+                            if(!startPlayList.value) { break }
+                            totalAudios--
+                            currentAudioIndex++
+                            val audio = audioList.value.find { it.id == audios[currentAudioIndex].idAudio }
+                            val audioFile = File("", audio?.path ?: "")
+                            audioPlayer.playFile(audioFile)
+                            var isFinish = false
+                            while (!isFinish) {
+                                if(!startPlayList.value) { break }
+                                sleep(groupList.value[currentGroupIndex].intervalSecond.toLong() * 1000L)
+                                isFinish = audioPlayer.playerInfo == true
+                            }
+
+                        }
+                    }
+                }
+
+            }
+        }
     }
-    is PlayState.Default -> {}
-    is PlayState.Error -> {}
-    is PlayState.Loading -> {}
-}
+
+
+
+
+
 
 
 
@@ -107,12 +151,13 @@ when (state) {
                 modifier = Modifier
                     .width(100.dp)
                     .height(100.dp)
-                    .padding(28.dp)
+                    .padding(start = 32.dp, top = 32.dp)
                     .clickable {
+                        startPlayList.value = true
                         colorPlay.intValue = android.R.color.darker_gray
                         colorStop.intValue = android.R.color.holo_red_light
                     },
-                painter = painterResource(id = R.drawable.ic_play),
+                painter = painterResource(id = R.drawable.ic_play_draw),
                 tint = colorResource(colorPlay.intValue),
                 contentDescription = ""
             )
@@ -120,12 +165,14 @@ when (state) {
                 modifier = Modifier
                     .width(100.dp)
                     .height(100.dp)
-                    .padding(28.dp)
+                    .padding(end = 32.dp, top = 32.dp)
                     .clickable {
+                        startPlayList.value = false
                         colorPlay.intValue = android.R.color.holo_green_light
                         colorStop.intValue = android.R.color.darker_gray
+
                     },
-                painter = painterResource(id = R.drawable.ic_stop),
+                painter = painterResource(id = R.drawable.ic_pause_draw),
                 tint = colorResource(colorStop.intValue),
                 contentDescription = ""
             )
@@ -156,8 +203,6 @@ when (state) {
         }
     }
 
-
-
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -174,24 +219,7 @@ when (state) {
             contentDescription = stringResource(id = R.string.touch_for_remove),
         )
     }
-
-
-
-
 }
 
-@SuppressLint("MutableCollectionMutableState")
-@Composable
-fun AudioScreenSuccess(
-    applicationContext: android.content.Context,
-    state: GroupState.Loaded,
-) {
-    val openDialog = remember { mutableStateOf(false) }
-    val audioName = remember { mutableStateOf("") }
-    val player by lazy {
-        AndroidAudioPlayer(applicationContext)
-    }
 
-
-}
 
