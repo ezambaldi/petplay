@@ -28,9 +28,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import br.com.zambaldi.petplay.R
+import br.com.zambaldi.petplay.models.Group
 import br.com.zambaldi.petplay.ui.groups.GroupState
 import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
 import br.com.zambaldi.petplay.utils.TopMessageState
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -47,6 +49,7 @@ fun PlayListScreen(
     val errorSnackBarHostState = remember { SnackbarHostState() }
     val colorPlay = remember { mutableIntStateOf(android.R.color.holo_green_light) }
     val colorStop = remember { mutableIntStateOf(android.R.color.darker_gray) }
+    val groupList = remember { mutableStateOf<List<Group>>(emptyList()) }
 
 //    if(startRecord.value) {
 //        startRecord.value = false
@@ -66,32 +69,23 @@ fun PlayListScreen(
 
 
 
-val groupsToPlay = when (state) {
-        is PlayState.Loaded -> {
+when (state) {
+    is PlayState.Loaded -> {
+        groupList.value =  state.data.filter {
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+            val dateStartString = it.dateStart+" "+it.timeStart
+            val dateFinishString = it.dateFinish + " " + it.timeFinish
+            val dateStart = LocalDateTime.parse(dateStartString, formatter)
+            val dateFinish = LocalDateTime.parse(dateFinishString, formatter)
 
-            state.data.map {
-                val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
-                val teste = LocalDateTime.parse(it.dateStart+" "+it.timeStart, formatter) >= LocalDateTime.now() &&
-                        LocalDateTime.parse(it.dateFinish+" "+it.timeFinish, formatter) <= LocalDateTime.now()}
-
-            val teste2 = ""
+            LocalDateTime.now() in dateStart..dateFinish
         }
 
-
-
-
-
-
-
-//            state.data.filter {
-//                val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
-//                    LocalDateTime.parse(it.dateStart+" "+it.timeStart, formatter) >= LocalDateTime.now() &&
-//                            LocalDateTime.parse(it.dateFinish+" "+it.timeFinish, formatter) <= LocalDateTime.now()}
-//                }
-        PlayState.Default -> {}
-        PlayState.Error -> {}
-        PlayState.Loading -> {}
     }
+    is PlayState.Default -> {}
+    is PlayState.Error -> {}
+    is PlayState.Loading -> {}
+}
 
 
 

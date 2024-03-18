@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -59,6 +60,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -103,6 +105,13 @@ fun GroupListScreen(
     val groupInterval = remember { mutableFloatStateOf(1F) }
     val groupInteractionType = remember { mutableStateOf(InteractionType.SHAKE) }
     val showBottomSheet = remember { mutableStateOf(false) }
+    val localDate = LocalDate.now()
+    val localTimeStart = rememberTimePickerState(11,30, false)
+    val localTimeFinish = rememberTimePickerState(11,30, false)
+    val groupDateStart = remember { mutableStateOf(localDate) }
+    val groupDateFinish = remember { mutableStateOf(localDate) }
+    val groupTimeStart = remember { mutableStateOf(localTimeStart) }
+    val groupTimeFinish = remember { mutableStateOf(localTimeFinish) }
 
     if(!showBottomSheet.value) {
         val editGroup = remember { mutableStateOf(Group()) }
@@ -121,18 +130,11 @@ fun GroupListScreen(
                 SnackBarContainer(snackBarHostState = errorSnackBarHostState)
             },
             floatingActionButton = {
-                val localDate = LocalDate.now()
-                val localTimeStart = rememberTimePickerState(11,30, false)
-                val localTimeFinish = rememberTimePickerState(11,30, false)
                 var showDatePickerStart = remember { mutableStateOf(false) }
                 var showDatePickerFinish = remember { mutableStateOf(false) }
                 var showTimePickerStart = remember { mutableStateOf(false) }
                 var showTimePickerFinish = remember { mutableStateOf(false) }
                 val txtFieldError = remember { mutableStateOf("") }
-                val groupDateStart = remember { mutableStateOf(localDate) }
-                val groupDateFinish = remember { mutableStateOf(localDate) }
-                val groupTimeStart = remember { mutableStateOf(localTimeStart) }
-                val groupTimeFinish = remember { mutableStateOf(localTimeFinish) }
 
                 if(onDismiss.value) {
 
@@ -254,12 +256,13 @@ fun GroupListScreen(
                                                 onClick = {
                                                     showDatePickerStart.value = true
                                                 },
-                                                shape = RoundedCornerShape(50.dp),
+                                                shape = RoundedCornerShape(30.dp),
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .height(60.dp)
                                             ) {
                                                 Text(
+                                                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
                                                     textAlign = TextAlign.Center,
                                                     text = stringResource(id = R.string.enter_date_start) + groupDateStart.value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                                             }
@@ -272,14 +275,15 @@ fun GroupListScreen(
                                                 onClick = {
                                                     showTimePickerStart.value = true
                                                 },
-                                                shape = RoundedCornerShape(50.dp),
+                                                shape = RoundedCornerShape(30.dp),
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .height(60.dp)
                                             ) {
                                                 Text(
+                                                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
                                                     textAlign = TextAlign.Center,
-                                                    text = stringResource(id = R.string.enter_time_start) + groupTimeStart.value.hour.toString() + ":" + localTimeStart.minute.toString())
+                                                    text = stringResource(id = R.string.enter_time_start) + groupTimeStart.value.hour.toString().padStart(2, "0".first()) + ":" + groupTimeStart.value.minute.toString().padEnd(2, "0".first()))
                                             }
                                         }
 
@@ -301,12 +305,13 @@ fun GroupListScreen(
                                                 onClick = {
                                                     showDatePickerFinish.value = true
                                                 },
-                                                shape = RoundedCornerShape(50.dp),
+                                                shape = RoundedCornerShape(30.dp),
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .height(60.dp)
                                             ) {
                                                 Text(
+                                                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
                                                     textAlign = TextAlign.Center,
                                                     text = stringResource(id = R.string.enter_date_finish) + groupDateFinish.value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                                             }
@@ -319,14 +324,15 @@ fun GroupListScreen(
                                                 onClick = {
                                                     showTimePickerFinish.value = true
                                                 },
-                                                shape = RoundedCornerShape(50.dp),
+                                                shape = RoundedCornerShape(30.dp),
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .height(60.dp)
                                             ) {
                                                 Text(
+                                                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
                                                     textAlign = TextAlign.Center,
-                                                    text = stringResource(id = R.string.enter_time_finish) + groupTimeFinish.value.hour.toString() + ":" + localTimeFinish.minute.toString())
+                                                    text = stringResource(id = R.string.enter_time_finish) + groupTimeFinish.value.hour.toString().padStart(2, "0".first()) + ":" + groupTimeFinish.value.minute.toString().padEnd(2, "0".first()))
                                             }
                                         }
 
@@ -387,8 +393,8 @@ fun GroupListScreen(
                                                 editGroup.value.name = groupName.value
                                                 editGroup.value.dateStart = groupDateStart.value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                                 editGroup.value.dateFinish = groupDateFinish.value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                                                editGroup.value.timeStart = groupTimeStart.value.hour.toString() + ":" + localTimeStart.minute.toString()
-                                                editGroup.value.timeFinish = groupTimeFinish.value.hour.toString() + ":" + localTimeFinish.minute.toString()
+                                                editGroup.value.timeStart = groupTimeStart.value.hour.toString().padStart(2, "0".first()) + ":" + localTimeStart.minute.toString().padEnd(2, "0".first())
+                                                editGroup.value.timeFinish = groupTimeFinish.value.hour.toString().padStart(2, "0".first()) + ":" + localTimeFinish.minute.toString().padEnd(2, "0".first())
                                                 editGroup.value.intervalSecond = groupInterval.floatValue.toInt()
                                                 editGroup.value.interactionType = groupInteractionType.value
                                                 addGroup(
@@ -508,6 +514,10 @@ fun GroupListScreen(
                                                                 .clickable {
                                                                     onDismiss.value = true
                                                                     editGroup.value = group
+                                                                    groupDateStart.value = LocalDate.parse(group.dateStart, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                                    groupDateFinish.value = LocalDate.parse(group.dateFinish, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                                    groupTimeStart.value = TimePickerState(group.timeStart.split(":")[0].toInt(), group.timeStart.split(":")[1].toInt(), false)
+                                                                    groupTimeFinish.value = TimePickerState(group.timeFinish.split(":")[0].toInt(), group.timeFinish.split(":")[1].toInt(), false)
                                                                     groupName.value = group.name
                                                                     groupInterval.floatValue = group.intervalSecond.toFloat()
                                                                     groupInteractionType.value = group.interactionType
