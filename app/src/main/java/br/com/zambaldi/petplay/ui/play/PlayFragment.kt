@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import br.com.zambaldi.petplay.MainActivity
 import br.com.zambaldi.petplay.utils.TopMessageState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -105,6 +106,7 @@ class PlayFragment : Fragment() {
     ) {
         PlayListScreen(
             state = state,
+            mainActivity = requireActivity() as MainActivity,
             topMessageState = topMessageState,
             callFetch = callFetch,
         )
