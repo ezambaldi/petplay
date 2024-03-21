@@ -107,8 +107,6 @@ class PlayFragment : Fragment() {
         PlayListScreen(
             state = state,
             mainActivity = requireActivity() as MainActivity,
-            topMessageState = topMessageState,
-            callFetch = callFetch,
         )
     }
 

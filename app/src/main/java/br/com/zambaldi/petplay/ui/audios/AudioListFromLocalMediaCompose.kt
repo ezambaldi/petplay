@@ -5,17 +5,17 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,7 +42,6 @@ import br.com.zambaldi.petplay.R
 import br.com.zambaldi.petplay.models.Audio
 import br.com.zambaldi.petplay.ui.ImagePlay
 import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
-import coil.map.Mapper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.S)
@@ -122,11 +121,11 @@ fun AudioListFromMediaScreen(
                         onClick = { onClose() },
                         modifier = Modifier
                             .align(Alignment.End)
-                            .semantics { contentDescription = "fechar" }
+                            .semantics { contentDescription = "Close" }
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
-                            contentDescription = "Fechar",
+                            contentDescription = "Close",
                             tint = Color.Black,
                             modifier = Modifier
                                 .padding(8.dp)
@@ -141,6 +140,7 @@ fun AudioListFromMediaScreen(
                         audioList.forEach {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp)
@@ -153,10 +153,6 @@ fun AudioListFromMediaScreen(
 
                                 Text(
                                     modifier = Modifier
-                                        .clickable {
-                                            addAudio(it.path)
-                                            onClose()
-                                        }
                                         .wrapContentHeight()
                                         .padding(start = 8.dp),
                                     text = it.name,
@@ -167,6 +163,22 @@ fun AudioListFromMediaScreen(
                                         color = Color(0xFF1B2852),
                                     )
                                 )
+                                IconButton(
+                                    onClick = {
+                                        addAudio(it.path)
+                                        onClose()
+                                              },
+                                    modifier = Modifier
+                                        .semantics { contentDescription = "Select audio" }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Add,
+                                        contentDescription = "Select Audio",
+                                        tint = Color.Black,
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                    )
+                                }
                             }
                         }
                     }

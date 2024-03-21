@@ -27,6 +27,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import br.com.zambaldi.petplay.MainActivity
 import br.com.zambaldi.petplay.R
@@ -48,8 +50,6 @@ import java.time.format.DateTimeFormatter
 fun PlayListScreen(
     state: PlayState,
     mainActivity: MainActivity,
-    topMessageState: TopMessageState,
-    callFetch: () -> Unit,
 ) {
     val applicationContext = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -126,13 +126,6 @@ fun PlayListScreen(
         }
     }
 
-
-
-
-
-
-
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -159,7 +152,7 @@ fun PlayListScreen(
                     },
                 painter = painterResource(id = R.drawable.ic_play_draw),
                 tint = colorResource(colorPlay.intValue),
-                contentDescription = ""
+                contentDescription = "touch to play"
             )
             Icon(
                 modifier = Modifier
@@ -174,52 +167,53 @@ fun PlayListScreen(
                     },
                 painter = painterResource(id = R.drawable.ic_pause_draw),
                 tint = colorResource(colorStop.intValue),
-                contentDescription = ""
+                contentDescription = "touch to stop"
             )
         }
 
-
-        Image(
-            modifier = Modifier
-                .padding(bottom = 330.dp),
-            painter = painterResource(id = R.drawable.ic_corda),
-            contentDescription = stringResource(id = R.string.touch_for_remove),
-        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .width(80.dp)
-                .padding(top = 2.dp),
-
-            ) {
+                .semantics { contentDescription = "background images" }
+                .fillMaxSize()
+        ) {
             Image(
                 modifier = Modifier
-                    .width(80.dp)
-                    .padding(8.dp),
-                painter = painterResource(id = R.drawable.ic_celular),
-                contentDescription = stringResource(id = R.string.touch_for_remove),
+                    .padding(bottom = 0.dp),
+                painter = painterResource(id = R.drawable.ic_corda),
+                contentDescription = "rope image",
             )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                    .width(70.dp),
+
+                ) {
+                Image(
+                    modifier = Modifier
+                        .width(70.dp),
+                    painter = painterResource(id = R.drawable.ic_celular),
+                    contentDescription = "just mobile image",
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_cat),
+                    contentDescription = "just cat image",
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.ic_dog),
+                    contentDescription = "dog image",
+                )
+            }
         }
     }
-
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_cat),
-            contentDescription = stringResource(id = R.string.touch_for_remove),
-        )
-        Image(
-            painter = painterResource(id = R.drawable.ic_dog),
-            contentDescription = stringResource(id = R.string.touch_for_remove),
-        )
-    }
 }
-
-
-

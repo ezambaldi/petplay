@@ -3,9 +3,10 @@
     <string name="title_play">PET Play</string>
     <string name="title_audios">PET Play Audios</string>
     <string name="title_groups">PET Play Groups</string>
-    <string name="touch_for_play">Touch for Play</string>
-    <string name="touch_for_select">Touch for Select</string>
+    <string name="touch_for_play">Touch for Play or Stop</string>
+    <string name="touch_for_select">Touch for Select or unselect</string>
     <string name="touch_for_remove">Touch for Remove</string>
+    <string name="touch_for_edit">Touch for Edit</string>
     <string name="touch_for_include_audios">Touch for include audios</string>
     <string name="menu_play">Play</string>
     <string name="menu_audios">Audios</string>

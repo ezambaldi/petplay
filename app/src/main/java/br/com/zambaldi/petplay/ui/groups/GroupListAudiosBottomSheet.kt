@@ -103,11 +103,11 @@ fun GroupListAudiosBottomSheet(
                         onClick = { onNegativeButtonOrCloseClick() },
                         modifier = Modifier
                             .align(Alignment.End)
-                            .semantics { contentDescription = "fechar" }
+                            .semantics { contentDescription = "close" }
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
-                            contentDescription = "Fechar",
+                            contentDescription = "close",
                             tint = Color.Black,
                             modifier = Modifier
                                 .padding(8.dp)

@@ -1,13 +1,11 @@
 package br.com.zambaldi.petplay.ui.groups
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,12 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -38,12 +32,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
@@ -58,9 +50,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -81,7 +74,6 @@ import com.example.myapplicationtest.utils.bodyLargeBold
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -200,6 +192,7 @@ fun GroupListScreen(
                                             contentDescription = "",
                                             tint = colorResource(android.R.color.darker_gray),
                                             modifier = Modifier
+                                                .semantics { contentDescription = "close" }
                                                 .clickable { onDismiss.value = false }
                                                 .width(30.dp)
                                                 .height(30.dp)
@@ -210,6 +203,7 @@ fun GroupListScreen(
 
                                     TextField(
                                         modifier = Modifier
+                                            .semantics { contentDescription = "Enter name" }
                                             .fillMaxWidth()
                                             .border(
                                                 BorderStroke(
@@ -258,6 +252,7 @@ fun GroupListScreen(
                                                 },
                                                 shape = RoundedCornerShape(30.dp),
                                                 modifier = Modifier
+                                                    .semantics { contentDescription = "Select start date" }
                                                     .fillMaxWidth()
                                                     .height(60.dp)
                                             ) {
@@ -277,6 +272,7 @@ fun GroupListScreen(
                                                 },
                                                 shape = RoundedCornerShape(30.dp),
                                                 modifier = Modifier
+                                                    .semantics { contentDescription = "Select start time" }
                                                     .fillMaxWidth()
                                                     .height(60.dp)
                                             ) {
@@ -307,6 +303,7 @@ fun GroupListScreen(
                                                 },
                                                 shape = RoundedCornerShape(30.dp),
                                                 modifier = Modifier
+                                                    .semantics { contentDescription = "Select end date" }
                                                     .fillMaxWidth()
                                                     .height(60.dp)
                                             ) {
@@ -326,6 +323,7 @@ fun GroupListScreen(
                                                 },
                                                 shape = RoundedCornerShape(30.dp),
                                                 modifier = Modifier
+                                                    .semantics { contentDescription = "Select end time" }
                                                     .fillMaxWidth()
                                                     .height(60.dp)
                                             ) {
@@ -340,7 +338,14 @@ fun GroupListScreen(
 
                                     Spacer(modifier = Modifier.height(20.dp))
 
+                                    Text(
+                                        textAlign = TextAlign.End,
+                                        text = "Select the interval between audios",
+                                    )
+
                                     Slider(
+                                        modifier = Modifier
+                                            .semantics { contentDescription = "select the interval betwen audios" },
                                         steps = 60,
                                         valueRange = 3f..60f,
                                         value = groupInterval.floatValue,
@@ -361,7 +366,10 @@ fun GroupListScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.Start
                                     ) {
+
                                         RadioButton(
+                                            modifier = Modifier
+                                                .semantics { contentDescription = "Shake option" },
                                         selected = groupInteractionType.value == InteractionType.SHAKE,
                                             onClick = { groupInteractionType.value = InteractionType.SHAKE }
                                         )
@@ -371,6 +379,8 @@ fun GroupListScreen(
                                         )
 
                                         RadioButton(
+                                            modifier = Modifier
+                                                .semantics { contentDescription = "Sequential option" },
                                             selected = groupInteractionType.value == InteractionType.SEQUENCE,
                                             onClick = { groupInteractionType.value = InteractionType.SEQUENCE }
                                         )
@@ -406,10 +416,12 @@ fun GroupListScreen(
                                             },
                                             shape = RoundedCornerShape(50.dp),
                                             modifier = Modifier
+                                                .semantics { contentDescription = "Touch to confirm" }
                                                 .fillMaxWidth()
                                                 .height(50.dp)
                                         ) {
-                                            Text(text = stringResource(id = R.string.btn_confirm))
+                                            Text(
+                                                text = stringResource(id = R.string.btn_confirm))
                                         }
                                     }
                                 }
@@ -511,6 +523,15 @@ fun GroupListScreen(
                                                             style = bodyLarge,
                                                             color = colorResource(id = R.color.md_theme_dark_onTertiary),
                                                             modifier = modifier
+                                                                .padding(start = 4.dp)
+                                                        )
+                                                        Spacer(Modifier.weight(1f))
+
+                                                        Image(
+                                                            painter = painterResource(id = R.drawable.ic_edit),
+                                                            contentDescription = stringResource(id = R.string.touch_for_edit),
+                                                            modifier = modifier
+                                                                .padding(end = 12.dp)
                                                                 .clickable {
                                                                     onDismiss.value = true
                                                                     editGroup.value = group
@@ -522,9 +543,7 @@ fun GroupListScreen(
                                                                     groupInterval.floatValue = group.intervalSecond.toFloat()
                                                                     groupInteractionType.value = group.interactionType
                                                                 }
-                                                                .padding(start = 4.dp)
                                                         )
-                                                        Spacer(Modifier.weight(1f))
 
                                                         Image(
                                                             painter = painterResource(id = R.drawable.ic_remove),
@@ -598,7 +617,6 @@ fun GroupListScreen(
                             }.first().audios
                         }
                         val audioGroup = setAudioGroup.toMutableList()
-                        val groups: List<Group> = state.data
 
                         GroupListAudiosBottomSheet(
                             groupId = selectedGroup.value.id,
