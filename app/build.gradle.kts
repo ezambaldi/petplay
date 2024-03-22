@@ -12,7 +12,7 @@ android {
         applicationId = "br.com.zambaldi.petplay"
         minSdk = 26
         targetSdk = 33
-        versionCode = 2
+        versionCode = 4
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

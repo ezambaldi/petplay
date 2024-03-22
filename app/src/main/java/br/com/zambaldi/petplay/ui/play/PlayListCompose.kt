@@ -2,6 +2,8 @@ package br.com.zambaldi.petplay.ui.play
 
 import android.os.Build
 import android.os.SystemClock.sleep
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.IconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -23,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -58,6 +62,7 @@ fun PlayListScreen(
     val groupList = remember { mutableStateOf<List<Group>>(emptyList()) }
     val audioList = remember { mutableStateOf<List<Audio>>(emptyList()) }
     val startPlayList = remember { mutableStateOf(false) }
+    val vibrator: Vibrator? = null
 
     if(startPlayList.value) {
         when (state) {
@@ -140,34 +145,48 @@ fun PlayListScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top,
         ) {
-            Icon(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(100.dp)
-                    .padding(start = 32.dp, top = 32.dp)
-                    .clickable {
-                        startPlayList.value = true
-                        colorPlay.intValue = android.R.color.darker_gray
-                        colorStop.intValue = android.R.color.holo_red_light
-                    },
-                painter = painterResource(id = R.drawable.ic_play_draw),
-                tint = colorResource(colorPlay.intValue),
-                contentDescription = "touch to play"
-            )
-            Icon(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(100.dp)
-                    .padding(end = 32.dp, top = 32.dp)
-                    .clickable {
-                        startPlayList.value = false
-                        colorPlay.intValue = android.R.color.holo_green_light
-                        colorStop.intValue = android.R.color.darker_gray
 
-                    },
-                painter = painterResource(id = R.drawable.ic_pause_draw),
-                tint = colorResource(colorStop.intValue),
-                contentDescription = "touch to stop"
+            IconButton(
+                enabled = !startPlayList.value,
+                onClick = {
+                    startPlayList.value = true
+                    colorPlay.intValue = android.R.color.darker_gray
+                    colorStop.intValue = android.R.color.holo_red_light
+                },
+                modifier = Modifier
+                    .semantics { contentDescription = "touch to play sequentially or after shaking the device" },
+                content = {
+                    Icon(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(100.dp)
+                            .padding(start = 32.dp, top = 32.dp),
+                        painter = painterResource(id = R.drawable.ic_play_draw),
+                        tint = colorResource(colorPlay.intValue),
+                        contentDescription = "touch to play sequentially or after shaking the device"
+                    )                },
+            )
+
+            IconButton(
+                enabled = startPlayList.value,
+                onClick = {
+                    startPlayList.value = false
+                    colorPlay.intValue = android.R.color.holo_green_light
+                    colorStop.intValue = android.R.color.darker_gray
+                          },
+                modifier = Modifier
+                    .semantics { contentDescription = "touch to stop audios that are playing sequentially or after shaking the device" },
+                content = {
+                    Icon(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(100.dp)
+                            .padding(end = 32.dp, top = 32.dp),
+                        painter = painterResource(id = R.drawable.ic_pause_draw),
+                        tint = colorResource(colorStop.intValue),
+                        contentDescription = "touch to stop audios that are playing sequentially or after shaking the device"
+                    )
+                },
             )
         }
 

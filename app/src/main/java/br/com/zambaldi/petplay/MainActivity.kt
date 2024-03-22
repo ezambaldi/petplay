@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 difEventY > shakeThreshold && difEventZ > shakeThreshold)
             {
 
-                vibrator!!.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+//                vibrator?.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
                 isShakeDetected = true
 
             }
