@@ -26,7 +26,7 @@ import java.io.File
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
 
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     private var sensorManager: SensorManager? = null
     private var accelerometerSensor: Sensor? = null
     private var isAccelerometerSensorAvailable = false

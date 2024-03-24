@@ -2,11 +2,8 @@ package br.com.zambaldi.petplay.ui.play
 
 import android.os.Build
 import android.os.SystemClock.sleep
-import android.os.VibrationEffect
-import android.os.Vibrator
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.IconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
@@ -26,11 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -41,7 +35,6 @@ import br.com.zambaldi.petplay.models.AudiosGroup
 import br.com.zambaldi.petplay.models.Group
 import br.com.zambaldi.petplay.models.InteractionType
 import br.com.zambaldi.petplay.ui.recorders.AndroidAudioPlayer
-import br.com.zambaldi.petplay.utils.TopMessageState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -62,34 +55,34 @@ fun PlayListScreen(
     val groupList = remember { mutableStateOf<List<Group>>(emptyList()) }
     val audioList = remember { mutableStateOf<List<Audio>>(emptyList()) }
     val startPlayList = remember { mutableStateOf(false) }
-    val vibrator: Vibrator? = null
+
 
     if(startPlayList.value) {
-        when (state) {
-            is PlayState.Loaded -> {
-                audioList.value = state.audios
-                groupList.value =  state.data.filter {
-                    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-                    val dateStartString = it.dateStart+" "+it.timeStart
-                    val dateFinishString = it.dateFinish + " " + it.timeFinish
-                    val dateStart = LocalDateTime.parse(dateStartString, formatter)
-                    val dateFinish = LocalDateTime.parse(dateFinishString, formatter)
-
-                    LocalDateTime.now() in dateStart..dateFinish
-                }
-
-            }
-            is PlayState.Default -> {}
-            is PlayState.Error -> {}
-            is PlayState.Loading -> {}
-        }
-
         val audioPlayer = AndroidAudioPlayer(applicationContext)
-
         LaunchedEffect(Unit) {
             scope.launch(Dispatchers.IO) {
 
                 while (startPlayList.value) {
+
+                    when (state) {
+                        is PlayState.Loaded -> {
+                            audioList.value = state.audios
+                            groupList.value =  state.data.filter {
+                                val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                                val dateStartString = it.dateStart+" "+it.timeStart
+                                val dateFinishString = it.dateFinish + " " + it.timeFinish
+                                val dateStart = LocalDateTime.parse(dateStartString, formatter)
+                                val dateFinish = LocalDateTime.parse(dateFinishString, formatter)
+
+                                LocalDateTime.now() in dateStart..dateFinish
+                            }
+
+                        }
+                        is PlayState.Default -> {}
+                        is PlayState.Error -> {}
+                        is PlayState.Loading -> {}
+                    }
+
                     val audios = ArrayList<AudiosGroup>()
                     var currentGroupIndex = -1
                     var currentAudioIndex = -1
@@ -129,6 +122,17 @@ fun PlayListScreen(
                 }
             }
         }
+
+    }
+
+    if(startPlayList.value) {
+        mainActivity.binding.navView.visibility = android.view.View.GONE
+        colorPlay.intValue = android.R.color.darker_gray
+        colorStop.intValue = android.R.color.holo_red_light
+    } else {
+        mainActivity.binding.navView.visibility = android.view.View.VISIBLE
+        colorPlay.intValue = android.R.color.holo_green_light
+        colorStop.intValue = android.R.color.darker_gray
     }
 
     Box(
@@ -150,8 +154,6 @@ fun PlayListScreen(
                 enabled = !startPlayList.value,
                 onClick = {
                     startPlayList.value = true
-                    colorPlay.intValue = android.R.color.darker_gray
-                    colorStop.intValue = android.R.color.holo_red_light
                 },
                 modifier = Modifier
                     .semantics { contentDescription = "touch to play sequentially or after shaking the device" },
@@ -171,8 +173,6 @@ fun PlayListScreen(
                 enabled = startPlayList.value,
                 onClick = {
                     startPlayList.value = false
-                    colorPlay.intValue = android.R.color.holo_green_light
-                    colorStop.intValue = android.R.color.darker_gray
                           },
                 modifier = Modifier
                     .semantics { contentDescription = "touch to stop audios that are playing sequentially or after shaking the device" },
