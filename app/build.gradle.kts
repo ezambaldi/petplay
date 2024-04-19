@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "br.com.zambaldi.petplay"
+    namespace = "br.com.zambaldi.petplayzam"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "br.com.zambaldi.petplay"
+        applicationId = "br.com.zambaldi.petplayzam"
         minSdk = 26
         targetSdk = 33
         versionCode = 1
