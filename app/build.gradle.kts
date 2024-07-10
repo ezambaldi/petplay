@@ -6,14 +6,14 @@ plugins {
 
 android {
     namespace = "br.com.zambaldi.petplayzam"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "br.com.zambaldi.petplayzam"
-        minSdk = 26
-        targetSdk = 33
-        versionCode = 2
-        versionName = "1.1"
+        minSdk = 29
+        targetSdk = 35
+        versionCode = 3
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
