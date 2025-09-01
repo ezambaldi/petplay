@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "br.com.zambaldi.petplayzam"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "br.com.zambaldi.petplayzam"
         minSdk = 29
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 3
         versionName = "1.2"
 
