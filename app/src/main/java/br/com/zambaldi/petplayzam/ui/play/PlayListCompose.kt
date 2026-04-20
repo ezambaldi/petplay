@@ -4,14 +4,17 @@ import android.os.Build
 import android.os.SystemClock.sleep
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -22,12 +25,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.room.util.TableInfo
 import br.com.zambaldi.petplayzam.MainActivity
 import br.com.zambaldi.petplayzam.R
 import br.com.zambaldi.petplayzam.models.Audio
@@ -122,7 +128,6 @@ fun PlayListScreen(
                 }
             }
         }
-
     }
 
     if(startPlayList.value) {
@@ -135,27 +140,45 @@ fun PlayListScreen(
         colorStop.intValue = android.R.color.darker_gray
     }
 
+    Content(
+        startPlayList = startPlayList,
+        colorPlay = colorPlay,
+        colorStop = colorStop,
+    )
+
+}
+
+
+@Composable
+@Preview
+fun Content(
+    startPlayList: androidx.compose.runtime.MutableState<Boolean> = mutableStateOf(false),
+    colorPlay: androidx.compose.runtime.MutableIntState = mutableIntStateOf(android.R.color.holo_green_light),
+    colorStop: androidx.compose.runtime.MutableIntState = mutableIntStateOf(android.R.color.darker_gray),
+) {
     Box(
-        contentAlignment = Alignment.Center,
         modifier = Modifier
+            .background(Color.White)
             .fillMaxSize()
-
-        ) {
-
+            .padding(top = 90.dp)
+    )
+    {
         Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .align(Alignment.TopCenter)
+                .background(Color.White)
+                .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
         ) {
-
-            IconButton(
+                IconButton(
                 enabled = !startPlayList.value,
                 onClick = {
                     startPlayList.value = true
                 },
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .weight(0.5f)
                     .semantics { contentDescription = "touch to play sequentially or after shaking the device" },
                 content = {
                     Icon(
@@ -173,8 +196,11 @@ fun PlayListScreen(
                 enabled = startPlayList.value,
                 onClick = {
                     startPlayList.value = false
-                          },
+                },
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .weight(0.5f)
                     .semantics { contentDescription = "touch to stop audios that are playing sequentially or after shaking the device" },
                 content = {
                     Icon(
@@ -195,7 +221,6 @@ fun PlayListScreen(
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .semantics { contentDescription = "background images" }
-                .fillMaxSize()
         ) {
             Image(
                 modifier = Modifier
@@ -219,10 +244,11 @@ fun PlayListScreen(
             }
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .height(250.dp)
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom,
+                verticalAlignment = Alignment.Top,
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_cat),

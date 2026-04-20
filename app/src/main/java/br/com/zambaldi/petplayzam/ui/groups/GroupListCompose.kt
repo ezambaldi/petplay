@@ -462,7 +462,7 @@ fun GroupListScreen(
                         .fillMaxSize()
                         .background(Color.White)
                         .padding(
-                            vertical = 1.dp,
+                            top = 100.dp,
                         )
                 ) {
                     Box(
