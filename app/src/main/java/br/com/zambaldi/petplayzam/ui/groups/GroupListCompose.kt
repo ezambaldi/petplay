@@ -56,7 +56,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplayzam.R
 import br.com.zambaldi.petplayzam.models.AudiosGroup
 import br.com.zambaldi.petplayzam.models.Group
@@ -495,67 +494,65 @@ fun GroupListScreen(
                                         modifier = modifier
                                             .fillMaxSize()
                                     ) {
-                                        ConstraintLayout(
+                                        Column(
                                             modifier = modifier
                                                 .verticalScroll(rememberScrollState())
                                         ) {
-                                            Column {
-                                                groups.forEach { group ->
-                                                    Row(
-                                                        verticalAlignment = Alignment.CenterVertically,
+                                            groups.forEach { group ->
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    modifier = modifier
+                                                        .fillMaxWidth()
+                                                        .padding(8.dp)
+                                                ) {
+
+                                                    Image(
+                                                        painter = painterResource(id = R.drawable.ic_add),
+                                                        contentDescription = stringResource(id = R.string.touch_for_include_audios),
                                                         modifier = modifier
-                                                            .fillMaxWidth()
-                                                            .padding(8.dp)
-                                                    ) {
+                                                            .clickable {
+                                                                selectedGroup.value = group
+                                                                showBottomSheet.value = true
 
-                                                        Image(
-                                                            painter = painterResource(id = R.drawable.ic_add),
-                                                            contentDescription = stringResource(id = R.string.touch_for_include_audios),
-                                                            modifier = modifier
-                                                                .clickable {
-                                                                    selectedGroup.value = group
-                                                                    showBottomSheet.value = true
+                                                            }
+                                                    )
+                                                    Text(
+                                                        text = "${group.name} (${group.audios.size})",
+                                                        style = bodyLarge,
+                                                        color = colorResource(id = R.color.md_theme_dark_onTertiary),
+                                                        modifier = modifier
+                                                            .padding(start = 4.dp)
+                                                    )
+                                                    Spacer(Modifier.weight(1f))
 
-                                                                }
-                                                        )
-                                                        Text(
-                                                            text = "${group.name} (${group.audios.size})",
-                                                            style = bodyLarge,
-                                                            color = colorResource(id = R.color.md_theme_dark_onTertiary),
-                                                            modifier = modifier
-                                                                .padding(start = 4.dp)
-                                                        )
-                                                        Spacer(Modifier.weight(1f))
+                                                    Image(
+                                                        painter = painterResource(id = R.drawable.ic_edit),
+                                                        contentDescription = stringResource(id = R.string.touch_for_edit),
+                                                        modifier = modifier
+                                                            .padding(end = 12.dp)
+                                                            .clickable {
+                                                                onDismiss.value = true
+                                                                editGroup.value = group
+                                                                groupDateStart.value = LocalDate.parse(group.dateStart, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                                groupDateFinish.value = LocalDate.parse(group.dateFinish, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                                                groupTimeStart.value = TimePickerState(group.timeStart.split(":")[0].toInt(), group.timeStart.split(":")[1].toInt(), false)
+                                                                groupTimeFinish.value = TimePickerState(group.timeFinish.split(":")[0].toInt(), group.timeFinish.split(":")[1].toInt(), false)
+                                                                groupName.value = group.name
+                                                                groupInterval.floatValue = group.intervalSecond.toFloat()
+                                                                groupInteractionType.value = group.interactionType
+                                                            }
+                                                    )
 
-                                                        Image(
-                                                            painter = painterResource(id = R.drawable.ic_edit),
-                                                            contentDescription = stringResource(id = R.string.touch_for_edit),
-                                                            modifier = modifier
-                                                                .padding(end = 12.dp)
-                                                                .clickable {
-                                                                    onDismiss.value = true
-                                                                    editGroup.value = group
-                                                                    groupDateStart.value = LocalDate.parse(group.dateStart, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                                                                    groupDateFinish.value = LocalDate.parse(group.dateFinish, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                                                                    groupTimeStart.value = TimePickerState(group.timeStart.split(":")[0].toInt(), group.timeStart.split(":")[1].toInt(), false)
-                                                                    groupTimeFinish.value = TimePickerState(group.timeFinish.split(":")[0].toInt(), group.timeFinish.split(":")[1].toInt(), false)
-                                                                    groupName.value = group.name
-                                                                    groupInterval.floatValue = group.intervalSecond.toFloat()
-                                                                    groupInteractionType.value = group.interactionType
-                                                                }
-                                                        )
-
-                                                        Image(
-                                                            painter = painterResource(id = R.drawable.ic_remove),
-                                                            contentDescription = stringResource(id = R.string.touch_for_remove),
-                                                            modifier = modifier
-                                                                .clickable {
-                                                                    groupToDelete.value = group.id
-                                                                    groupName.value = group.name
-                                                                    openDialog.value = true
-                                                                }
-                                                        )
-                                                    }
+                                                    Image(
+                                                        painter = painterResource(id = R.drawable.ic_remove),
+                                                        contentDescription = stringResource(id = R.string.touch_for_remove),
+                                                        modifier = modifier
+                                                            .clickable {
+                                                                groupToDelete.value = group.id
+                                                                groupName.value = group.name
+                                                                openDialog.value = true
+                                                            }
+                                                    )
                                                 }
                                             }
                                         }

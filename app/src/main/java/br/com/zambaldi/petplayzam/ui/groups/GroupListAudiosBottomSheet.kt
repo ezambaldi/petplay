@@ -38,7 +38,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplayzam.R
 import br.com.zambaldi.petplayzam.models.Audio
 import br.com.zambaldi.petplayzam.models.AudiosGroup
@@ -138,67 +137,66 @@ fun GroupListAudiosBottomSheet(
                         modifier = Modifier
                             .fillMaxSize()
                     ) {
-                        ConstraintLayout(
-                            modifier = Modifier
-                                .verticalScroll(rememberScrollState())
+                        Column(
+                           modifier = Modifier
+                               .fillMaxSize()
+                               .verticalScroll(rememberScrollState())
                         ) {
-                            Column {
-                                audios.forEach { audio ->
+                            audios.forEach { audio ->
 
-                                    val isCheck = audioGroup.filter {
-                                        it.idAudio == audio.id
-                                    }
-                                    checkIcon.value =
-                                        if (isCheck.isNotEmpty()) R.drawable.ic_check else R.drawable.ic_add_gray
+                                val isCheck = audioGroup.filter {
+                                    it.idAudio == audio.id
+                                }
+                                checkIcon.value =
+                                    if (isCheck.isNotEmpty()) R.drawable.ic_check else R.drawable.ic_add_gray
 
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                ) {
+
+                                    ImagePlay(
+                                        audio = audio,
+                                        player = player,
+                                    )
+
+                                    Text(
+                                        text = audio.name,
+                                        style = bodyLarge,
+                                        color = colorResource(id = R.color.md_theme_dark_onTertiary),
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(8.dp)
-                                    ) {
+                                            .padding(start = 4.dp)
+                                    )
+                                    Spacer(Modifier.weight(1f))
 
-                                        ImagePlay(
-                                            audio = audio,
-                                            player = player,
-                                        )
+                                    Image(
+                                        painter = painterResource(id = checkIcon.value),
+                                        contentDescription = stringResource(id = R.string.touch_for_select),
+                                        modifier = Modifier
+                                            .clickable {
+                                                val isAudio =
+                                                    audioGroup.filter { it.idAudio == audio.id }
+                                                        .let {
+                                                            if (it.isNotEmpty()) it[0].id else null
+                                                        }
 
-                                        Text(
-                                            text = audio.name,
-                                            style = bodyLarge,
-                                            color = colorResource(id = R.color.md_theme_dark_onTertiary),
-                                            modifier = Modifier
-                                                .padding(start = 4.dp)
-                                        )
-                                        Spacer(Modifier.weight(1f))
-
-                                        Image(
-                                            painter = painterResource(id = checkIcon.value),
-                                            contentDescription = stringResource(id = R.string.touch_for_select),
-                                            modifier = Modifier
-                                                .clickable {
-                                                    val isAudio =
-                                                        audioGroup.filter { it.idAudio == audio.id }
-                                                            .let {
-                                                                if (it.isNotEmpty()) it[0].id else null
-                                                            }
-
-                                                    if (isAudio != null) {
-                                                        deleteAudioGroup(
-                                                            isAudio
+                                                if (isAudio != null) {
+                                                    deleteAudioGroup(
+                                                        isAudio
+                                                    )
+                                                } else {
+                                                    addAudioGroup(
+                                                        AudiosGroup(
+                                                            idGroup = groupId,
+                                                            idAudio = audio.id,
                                                         )
-                                                    } else {
-                                                        addAudioGroup(
-                                                            AudiosGroup(
-                                                                idGroup = groupId,
-                                                                idAudio = audio.id,
-                                                            )
-                                                        )
-                                                    }
-                                                    callFetch()
+                                                    )
                                                 }
-                                        )
-                                    }
+                                                callFetch()
+                                            }
+                                    )
                                 }
                             }
                         }

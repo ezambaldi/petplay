@@ -1,6 +1,5 @@
 package br.com.zambaldi.petplayzam.utils
 
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,8 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Snackbar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -100,7 +99,6 @@ fun SnackBarContainer(snackBarHostState: SnackbarHostState) {
 @Composable
 fun CustomSnackBar(customVisuals: SnackBarVisualsCustom) {
     Snackbar(
-        backgroundColor = customVisuals.backgroundColor,
         modifier = Modifier.padding(16.dp),
     ) {
         Row(

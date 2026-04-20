@@ -23,8 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -51,7 +49,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.constraintlayout.compose.ConstraintLayout
 import br.com.zambaldi.petplayzam.R
 import br.com.zambaldi.petplayzam.models.Audio
 import br.com.zambaldi.petplayzam.ui.AlertDialogWithBtn
@@ -69,6 +66,8 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 import java.io.File
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -410,48 +409,46 @@ fun AudioScreenSuccess(
         modifier = modifier
             .fillMaxSize()
     ) {
-        ConstraintLayout(
+        Column(
             modifier = modifier
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            Column {
-                audios.forEach { audio ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+            audios.forEach { audio ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+
+                    ImagePlay(
+                        audio = audio,
+                        player = player,
+                    )
+
+                    Text(
+                        text = audio.name,
+                        style = bodyLarge,
+                        color = colorResource(id = R.color.md_theme_dark_onTertiary),
                         modifier = modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
+                            .padding(start = 4.dp)
+                    )
+                    Spacer(Modifier.weight(1f))
 
-                        ImagePlay(
-                            audio = audio,
-                            player = player,
-                            )
-
-                        Text(
-                            text = audio.name,
-                            style = bodyLarge,
-                            color = colorResource(id = R.color.md_theme_dark_onTertiary),
-                            modifier = modifier
-                                .padding(start = 4.dp)
-                        )
-                        Spacer(Modifier.weight(1f))
-
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_remove),
-                            contentDescription = stringResource(id = R.string.touch_for_remove),
-                            modifier = modifier
-                                .clickable {
-                                    audioToDelete.intValue = audio.id
-                                    audioName.value = audio.name
-                                    openDialog.value = true
-                                }
-                        )
-                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_remove),
+                        contentDescription = stringResource(id = R.string.touch_for_remove),
+                        modifier = modifier
+                            .clickable {
+                                audioToDelete.intValue = audio.id
+                                audioName.value = audio.name
+                                openDialog.value = true
+                            }
+                    )
                 }
             }
-        }
-    }
+        }    }
 
     if (openDialog.value) {
         AlertDialogWithBtn(
