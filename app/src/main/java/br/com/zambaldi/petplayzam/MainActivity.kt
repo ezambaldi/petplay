@@ -46,8 +46,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             android.Manifest.permission.INTERNET,
             android.Manifest.permission.RECORD_AUDIO,
             android.Manifest.permission.READ_MEDIA_AUDIO,
-            android.Manifest.permission.READ_MEDIA_VIDEO,
-            android.Manifest.permission.ACCESS_MEDIA_LOCATION,
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             android.Manifest.permission.VIBRATE,
